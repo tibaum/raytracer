@@ -1,6 +1,5 @@
 package raytracer.elements
 
-import kotlin.math.abs
 import kotlin.math.sqrt
 
 class Tuple(vararg val values: Double) {
@@ -21,8 +20,6 @@ class Tuple(vararg val values: Double) {
                 return false
         return true
     }
-
-    private fun almostEqual(x: Double, y: Double) = abs(x - y) < 0.00001
 
     operator fun plus(other: Tuple): Tuple {
         val newValues = DoubleArray(values.size)
