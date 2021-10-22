@@ -72,7 +72,7 @@ class PPMColor(private val color: Color) {
     fun getValues() = colorTPPMDigits()
 
     private fun colorTPPMDigits(): List<String> {
-        val scaledValues = (color * 255.0).values
+        val scaledValues = color * 255.0
         val red = cap(scaledValues[0].roundToInt())
         val green = cap(scaledValues[1].roundToInt())
         val blue = cap(scaledValues[2].roundToInt())
@@ -86,5 +86,3 @@ class PPMColor(private val color: Color) {
             else -> value
         }
 }
-
-

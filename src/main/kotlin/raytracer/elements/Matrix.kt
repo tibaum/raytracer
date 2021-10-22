@@ -81,7 +81,7 @@ class Matrix(private val dim: Dim, private vararg val entries: Double) {
     }
 
     operator fun times(tuple: Tuple): Tuple {
-        val other = Matrix(Dim(tuple.values.size, 1), *tuple.values)
+        val other = Matrix(Dim(tuple.size, 1), *tuple.toDoubleArray())
         val matrix = this * other
         return Tuple(*matrix.entries)
     }

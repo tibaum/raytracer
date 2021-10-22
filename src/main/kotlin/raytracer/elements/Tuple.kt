@@ -2,12 +2,17 @@ package raytracer.elements
 
 import kotlin.math.sqrt
 
-class Tuple(vararg val values: Double) {
+class Tuple(private vararg val values: Double) {
 
     companion object {
         fun createVector(x: Double, y: Double, z: Double) = Tuple(x, y, z, 0.0)
         fun createPoint(x: Double, y: Double, z: Double) = Tuple(x, y, z, 1.0)
     }
+
+    val size: Int
+        get() = values.size
+
+    fun toDoubleArray(): DoubleArray = values.copyOf()
 
     fun isPoint() = values.size == 4 && values[3] == 1.0
     fun isVector() = values.size == 4 && values[3] == 0.0
@@ -15,10 +20,21 @@ class Tuple(vararg val values: Double) {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is Tuple) return false
+        if (other.size != this.size) return false
         for (i in values.indices)
             if (!almostEqual(values[i], other.values[i]))
                 return false
         return true
+    }
+
+    override fun hashCode(): Int {
+        return values.contentHashCode()
+    }
+
+    operator fun get(index: Int): Double {
+        if (index < 0 || index > values.size - 1)
+            throw IndexOutOfBoundsException("index=$index but tuple-size=${values.size}")
+        return values[index]
     }
 
     operator fun plus(other: Tuple): Tuple {
@@ -93,3 +109,5 @@ class Tuple(vararg val values: Double) {
 }
 
 typealias Color = Tuple
+typealias Point = Tuple
+typealias Vector = Tuple

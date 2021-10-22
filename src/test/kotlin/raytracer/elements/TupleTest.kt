@@ -6,12 +6,32 @@ import org.junit.jupiter.api.Test
 class TupleTest {
 
     @Test
+    fun testImmutability() {
+        val tuple = Tuple(4.3, -4.2, 3.1, 1.0)
+        val array = tuple.toDoubleArray()
+        array[0] = 9.9
+        assertEquals(4.3, tuple[0])
+    }
+
+    @Test
+    fun testAccessBelowLowerBound() {
+        val tuple = Tuple(4.3)
+        assertThrows(IndexOutOfBoundsException::class.java) { tuple[-1] }
+    }
+
+    @Test
+    fun testAccessAboveUpperBound() {
+        val tuple = Tuple(4.3)
+        assertThrows(IndexOutOfBoundsException::class.java) { tuple[1] }
+    }
+
+    @Test
     fun testPoint() {
         val tuple = Tuple(4.3, -4.2, 3.1, 1.0)
-        assertEquals(4.3, tuple.values[0])
-        assertEquals(-4.2, tuple.values[1])
-        assertEquals(3.1, tuple.values[2])
-        assertEquals(1.0, tuple.values[3])
+        assertEquals(4.3, tuple[0])
+        assertEquals(-4.2, tuple[1])
+        assertEquals(3.1, tuple[2])
+        assertEquals(1.0, tuple[3])
         assertTrue(tuple.isPoint())
         assertFalse(tuple.isVector())
     }
@@ -19,12 +39,27 @@ class TupleTest {
     @Test
     fun testVector() {
         val tuple = Tuple(4.3, -4.2, 3.1, 0.0)
-        assertEquals(4.3, tuple.values[0])
-        assertEquals(-4.2, tuple.values[1])
-        assertEquals(3.1, tuple.values[2])
-        assertEquals(0.0, tuple.values[3])
+        assertEquals(4.3, tuple[0])
+        assertEquals(-4.2, tuple[1])
+        assertEquals(3.1, tuple[2])
+        assertEquals(0.0, tuple[3])
         assertFalse(tuple.isPoint())
         assertTrue(tuple.isVector())
+    }
+
+    @Test
+    fun testNotEqual() {
+        val tuple = Tuple(0.0)
+        val tuple2 = Tuple(0.0, 1.0)
+        assertNotEquals(tuple, tuple2)
+        assertNotEquals(tuple2, tuple)
+    }
+
+    @Test
+    fun testAlmostEqual() {
+        val tuple = Tuple(0.0)
+        val tuple2 = Tuple(0.000001)
+        assertEquals(tuple, tuple2)
     }
 
     @Test
@@ -99,7 +134,7 @@ class TupleTest {
 
     @Test
     fun testMagnitudeWithOnlyY() {
-        val vector= Tuple.createVector(0.0, 1.0, 0.0)
+        val vector = Tuple.createVector(0.0, 1.0, 0.0)
         assertEquals(1.0, vector.magnitude())
     }
 
@@ -118,13 +153,13 @@ class TupleTest {
     @Test
     fun testNormalizeTupleWithOnlyX() {
         val vector = Tuple.createVector(4.0, 0.0, 0.0)
-        assertEquals(Tuple(1.0, 0.0, 0.0), vector.normalize())
+        assertEquals(Tuple(1.0, 0.0, 0.0, 0.0), vector.normalize())
     }
 
     @Test
     fun testNormalizeTuple() {
         val vector = Tuple.createVector(1.0, 2.0, 3.0)
-        assertEquals(Tuple(0.26726, 0.53452, 0.80178), vector.normalize())
+        assertEquals(Tuple(0.26726, 0.53452, 0.80178, 0.0), vector.normalize())
     }
 
     @Test
@@ -150,4 +185,3 @@ class TupleTest {
     }
 
 }
-
