@@ -5,8 +5,8 @@ import kotlin.math.sqrt
 class Tuple(private vararg val values: Double) {
 
     companion object {
-        fun createVector(x: Double, y: Double, z: Double) = Tuple(x, y, z, 0.0)
-        fun createPoint(x: Double, y: Double, z: Double) = Tuple(x, y, z, 1.0)
+        fun vector(x: Double, y: Double, z: Double) = Tuple(x, y, z, 0.0)
+        fun point(x: Double, y: Double, z: Double) = Tuple(x, y, z, 1.0)
     }
 
     val size: Int

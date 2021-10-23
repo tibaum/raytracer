@@ -95,8 +95,50 @@ class Matrix(private val dim: Dim, private vararg val entries: Double) {
     }
 
     fun det(): Double {
-        return this[0, 0] * this[1, 1] - this[0, 1] * this[1, 0]
+        if (dim == Dim(1, 1))
+            return this[0, 0]
+
+        if (dim == Dim(2, 2))
+            return this[0, 0] * this[1, 1] - this[0, 1] * this[1, 0]
+
+        var result = 0.0
+        for (column in 0 until dim.ncol) {
+            result += this[0, column] * cofactor(0, column)
+        }
+        return result
     }
+
+    fun cofactor(row: Int, column: Int): Double {
+        val m = minor(row, column)
+        if ((row + column) % 2 == 0)
+            return m
+        return -m
+    }
+
+    fun minor(row: Int, column: Int) = submatrix(row, column).det()
+
+    /*
+       The algorithm is:
+       1. Create matrix of cofactors.
+       2. Transpose cofactor matrix.
+       3. Divide each element by the determinat of the original matrix.
+       The algorithm below combines these operations.
+    */
+    fun inverse(): Matrix {
+        if (!isInvertible())
+            throw UnsupportedOperationException("Matrix is not invertible.")
+
+        val entries = DoubleArray(dim.nrow * dim.ncol)
+        for (row in 0 until dim.nrow) {
+            for (column in 0 until dim.ncol) {
+                val c = cofactor(row, column)
+                entries[index(column, row)] = c / det()
+            }
+        }
+        return Matrix(Dim(dim.nrow, dim.ncol), *entries)
+    }
+
+    fun isInvertible() = det() != 0.0
 
     fun submatrix(row: Int, column: Int): Matrix {
         val entries = DoubleArray((dim.nrow - 1) * (dim.ncol - 1))
