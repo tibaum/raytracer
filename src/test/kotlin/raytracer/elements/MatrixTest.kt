@@ -548,4 +548,65 @@ class MatrixTest {
         assertEquals(matrixA, matrixA * matrixB * matrixB.inverse())
     }
 
+    @Test
+    fun testToString4x4() {
+        val matrix = Matrix(
+            Dim(4, 4),
+            79135.0, -9.0, 7.0, 3.0,
+            3.0, -8.0, 2.0, -9.0,
+            -4.0, 4.0, 4.0, 1.0,
+            -6.0, 5.0, -211.0, 1.0
+        )
+        val expectedString = """
+                       0       1       2       3
+
+            0    79135.0    -9.0     7.0     3.0
+            1        3.0    -8.0     2.0    -9.0
+            2       -4.0     4.0     4.0     1.0
+            3       -6.0     5.0  -211.0     1.0
+            """.trimIndent()
+        assertEquals(expectedString, matrix.toString())
+    }
+
+    @Test
+    fun testToString4x1() {
+        val matrix = Matrix(
+            Dim(4, 1),
+            5.0,
+            -9.0,
+            7.0,
+            3.12217
+        )
+        val expectedString = """
+                        0
+
+             0        5.0
+             1       -9.0
+             2        7.0
+             3    3.12217
+            """.trimIndent()
+        assertEquals(expectedString, matrix.toString())
+    }
+
+    @Test
+    fun testToString1x4() {
+        val matrix = Matrix(
+            Dim(1, 4),
+            5.0, -9.0, 7.0, 3.12217
+        )
+        val expectedString = """
+                        0       1       2       3
+
+             0        5.0    -9.0     7.0 3.12217
+            """.trimIndent()
+        assertEquals(expectedString, matrix.toString())
+    }
+
+    @Test
+    fun testToStringShortRepresentationForLargeMatrices() {
+        assertEquals("Matrix[dim=(5, 5)]", Matrix.identity(5).toString())
+        assertEquals("Matrix[dim=(4, 5)]", Matrix.zeros(Dim(4, 5)).toString())
+        assertEquals("Matrix[dim=(5, 4)]", Matrix.zeros(Dim(5, 4)).toString())
+    }
+
 }

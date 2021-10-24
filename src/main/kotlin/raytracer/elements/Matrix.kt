@@ -1,5 +1,7 @@
 package raytracer.elements
 
+import java.lang.Integer.max
+
 data class Dim(val nrow: Int, val ncol: Int) {
     init {
         if (nrow < 1 || ncol < 1)
@@ -21,6 +23,8 @@ class Matrix(private val dim: Dim, private vararg val entries: Double) {
                 entries[k * (size + 1)] = 1.0
             return Matrix(Dim(size, size), *entries)
         }
+
+        fun zeros(dim: Dim) = Matrix(dim, *DoubleArray(dim.nrow * dim.ncol) { 0.0 })
     }
 
     operator fun get(row: Int, column: Int): Double {
@@ -30,14 +34,32 @@ class Matrix(private val dim: Dim, private vararg val entries: Double) {
     }
 
     override fun toString(): String {
-        var result = ""
-        for (i in 0 until dim.nrow) {
-            for (j in 0 until dim.ncol) {
-                result += "${this[i, j]} "
-            }
-            result += "\n"
+        if (dim.nrow > 4 || dim.ncol > 4)
+            return "Matrix[dim=(${dim.nrow}, ${dim.ncol})]"
+
+        val rowIndexWidth = dim.nrow.toString().length
+        val emptyRowIndex = "".padStart(rowIndexWidth, ' ')
+
+        val columnIndexWidth = dim.ncol.toString().length
+        val entryWidth = entries.map(Double::toString).maxOf(String::length)
+        val columnWidth = max(columnIndexWidth, entryWidth)
+
+        val spaceBetweenRowIndexAndFirstColumn = "    "
+        val spaceBetweenEntries = " "
+
+        val columnHeader =
+            emptyRowIndex + spaceBetweenRowIndexAndFirstColumn + IntRange(0, dim.ncol - 1).map(Int::toString)
+                .joinToString(spaceBetweenEntries) { it.padStart(columnWidth, ' ') }
+
+        val formattedRows = mutableListOf<String>()
+        for (row in 0 until dim.nrow) {
+            val rowIndex = row.toString().padStart(rowIndexWidth, ' ')
+            val rowEntries = IntRange(0, dim.ncol - 1).map { column -> this[row, column] }.map(Double::toString)
+                .joinToString(spaceBetweenEntries) { it.padStart(columnWidth, ' ') }
+            formattedRows.add(rowIndex + spaceBetweenRowIndexAndFirstColumn + rowEntries)
         }
-        return result
+
+        return columnHeader + "\n\n" + formattedRows.joinToString("\n")
     }
 
     override fun equals(other: Any?): Boolean {
