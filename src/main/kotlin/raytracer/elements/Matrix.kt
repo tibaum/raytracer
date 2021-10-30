@@ -1,6 +1,8 @@
 package raytracer.elements
 
 import java.lang.Integer.max
+import kotlin.math.cos
+import kotlin.math.sin
 
 data class Dim(val nrow: Int, val ncol: Int) {
     init {
@@ -25,6 +27,74 @@ class Matrix(private val dim: Dim, private vararg val entries: Double) {
         }
 
         fun zeros(dim: Dim) = Matrix(dim, *DoubleArray(dim.nrow * dim.ncol) { 0.0 })
+
+        /**
+         * 4x4 translation matrix
+         */
+        fun translation(x: Double, y: Double, z: Double) = Matrix(
+            Dim(4, 4),
+            1.0, 0.0, 0.0, x,
+            0.0, 1.0, 0.0, y,
+            0.0, 0.0, 1.0, z,
+            0.0, 0.0, 0.0, 1.0
+        )
+
+        /**
+         * 4x4 scaling matrix
+         */
+        fun scaling(x: Double, y: Double, z: Double) = Matrix(
+            Dim(4, 4),
+            x, 0.0, 0.0, 0.0,
+            0.0, y, 0.0, 0.0,
+            0.0, 0.0, z, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+
+        /**
+         * 4x4 rotation around x-axis matrix
+         */
+        fun rotationX(radians: Double) = Matrix(
+            Dim(4, 4),
+            1.0, 0.0, 0.0, 0.0,
+            0.0, cos(radians), -sin(radians), 0.0,
+            0.0, sin(radians), cos(radians), 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+
+        /**
+         * 4x4 rotation around y-axis matrix
+         */
+        fun rotationY(radians: Double) = Matrix(
+            Dim(4, 4),
+            cos(radians), 0.0, sin(radians), 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            -sin(radians), 0.0, cos(radians), 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+
+        /**
+         * 4x4 rotation around z-axis matrix
+         */
+        fun rotationZ(radians: Double) = Matrix(
+            Dim(4, 4),
+            cos(radians), -sin(radians), 0.0, 0.0,
+            sin(radians), cos(radians), 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+
+        /**
+         * 4x4 shearing matrix
+         * @param xY means x moved in proportion to y
+         */
+        fun shearing(xY: Double, xZ: Double, yX: Double, yZ: Double, zX: Double, zY: Double) = Matrix(
+            Dim(4, 4),
+            1.0, xY, xZ, 0.0,
+            yX, 1.0, yZ, 0.0,
+            zX, zY, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+
     }
 
     operator fun get(row: Int, column: Int): Double {

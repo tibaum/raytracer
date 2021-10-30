@@ -2,6 +2,8 @@ package raytracer.elements
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import kotlin.math.PI
+import kotlin.math.sqrt
 
 class MatrixTest {
 
@@ -607,6 +609,150 @@ class MatrixTest {
         assertEquals("Matrix[dim=(5, 5)]", Matrix.identity(5).toString())
         assertEquals("Matrix[dim=(4, 5)]", Matrix.zeros(Dim(4, 5)).toString())
         assertEquals("Matrix[dim=(5, 4)]", Matrix.zeros(Dim(5, 4)).toString())
+    }
+
+    @Test
+    fun testMultiplyByTranslationMatrix() {
+        val transform: Matrix = Matrix.translation(5.0, -3.0, 2.0)
+        val point = Tuple.point(-3.0, 4.0, 5.0)
+        assertEquals(Tuple.point(2.0, 1.0, 7.0), transform * point)
+    }
+
+    @Test
+    fun testMultiplyByInverseTranslationMatrix() {
+        val inverseTransform: Matrix = Matrix.translation(5.0, -3.0, 2.0).inverse()
+        val point = Tuple.point(-3.0, 4.0, 5.0)
+        assertEquals(Tuple.point(-8.0, 7.0, 3.0), inverseTransform * point)
+    }
+
+    @Test
+    fun testMultiplyByTranslationMatrixDoesNotAffectVector() {
+        val transform: Matrix = Matrix.translation(5.0, -3.0, 2.0)
+        val vector = Tuple.vector(-3.0, 4.0, 5.0)
+        assertEquals(vector, transform * vector)
+    }
+
+    @Test
+    fun testMultiplyPointByScalingMatrix() {
+        val transform = Matrix.scaling(2.0, 3.0, 4.0)
+        val point = Tuple.point(-4.0, 6.0, 8.0)
+        assertEquals(Tuple.point(-8.0, 18.0, 32.0), transform * point)
+    }
+
+    @Test
+    fun testMultiplyVectorByScalingMatrix() {
+        val transform = Matrix.scaling(2.0, 3.0, 4.0)
+        val vector = Tuple.vector(-4.0, 6.0, 8.0)
+        assertEquals(Tuple.vector(-8.0, 18.0, 32.0), transform * vector)
+    }
+
+    @Test
+    fun testMultiplyVectorByInverseScalingMatrix() {
+        val transform = Matrix.scaling(2.0, 3.0, 4.0).inverse()
+        val vector = Tuple.vector(-4.0, 6.0, 8.0)
+        assertEquals(Tuple.vector(-2.0, 2.0, 2.0), transform * vector)
+    }
+
+    @Test
+    fun testReflectionIsScalingByANegativeValue() {
+        val transform = Matrix.scaling(-1.0, 1.0, 1.0)
+        val point = Tuple.point(2.0, 3.0, 4.0)
+        assertEquals(Tuple.point(-2.0, 3.0, 4.0), transform * point)
+    }
+
+    @Test
+    fun testRotatingPointAroundXAxis() {
+        val point = Tuple.point(0.0, 1.0, 0.0)
+        val halfQuarter = Matrix.rotationX(PI / 4)
+        val fullQuarter = Matrix.rotationX(PI / 2)
+        assertEquals(Tuple.point(0.0, sqrt(2.0) / 2.0, sqrt(2.0) / 2.0), halfQuarter * point)
+        assertEquals(Tuple.point(0.0, 0.0, 1.0), fullQuarter * point)
+    }
+
+    @Test
+    fun testRotatingPointAroundXAxisInOppositeDirection() {
+        val point = Tuple.point(0.0, 1.0, 0.0)
+        val halfQuarterInverse = Matrix.rotationX(PI / 4).inverse()
+        assertEquals(Tuple.point(0.0, sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0), halfQuarterInverse * point)
+    }
+
+    @Test
+    fun testRotatingPointAroundYAxis() {
+        val point = Tuple.point(0.0, 0.0, 1.0)
+        val halfQuarter = Matrix.rotationY(PI / 4)
+        val fullQuarter = Matrix.rotationY(PI / 2)
+        assertEquals(Tuple.point(sqrt(2.0) / 2.0, 0.0, sqrt(2.0) / 2.0), halfQuarter * point)
+        assertEquals(Tuple.point(1.0, 0.0, 0.0), fullQuarter * point)
+    }
+
+    @Test
+    fun testRotatingPointAroundZAxis() {
+        val point = Tuple.point(0.0, 1.0, 0.0)
+        val halfQuarter = Matrix.rotationZ(PI / 4)
+        val fullQuarter = Matrix.rotationZ(PI / 2)
+        assertEquals(Tuple.point(-sqrt(2.0) / 2.0, sqrt(2.0) / 2.0, 0.0), halfQuarter * point)
+        assertEquals(Tuple.point(-1.0, 0.0, 0.0), fullQuarter * point)
+    }
+
+    @Test
+    fun testShearingMovesXInProportionToY() {
+        val transform = Matrix.shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        val point = Tuple.point(2.0, 3.0, 4.0)
+        assertEquals(Tuple.point(5.0, 3.0, 4.0), transform * point)
+    }
+
+    @Test
+    fun testShearingMovesXInProportionToZ() {
+        val transform = Matrix.shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0)
+        val point = Tuple.point(2.0, 3.0, 4.0)
+        assertEquals(Tuple.point(6.0, 3.0, 4.0), transform * point)
+    }
+
+    @Test
+    fun testShearingMovesYInProportionToX() {
+        val transform = Matrix.shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0)
+        val point = Tuple.point(2.0, 3.0, 4.0)
+        assertEquals(Tuple.point(2.0, 5.0, 4.0), transform * point)
+    }
+
+    @Test
+    fun testShearingMovesYInProportionToZ() {
+        val transform = Matrix.shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+        val point = Tuple.point(2.0, 3.0, 4.0)
+        assertEquals(Tuple.point(2.0, 7.0, 4.0), transform * point)
+    }
+
+    @Test
+    fun testShearingMovesZInProportionToX() {
+        val transform = Matrix.shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+        val point = Tuple.point(2.0, 3.0, 4.0)
+        assertEquals(Tuple.point(2.0, 3.0, 6.0), transform * point)
+    }
+
+    @Test
+    fun testShearingMovesZInProportionToY() {
+        val transform = Matrix.shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+        val point = Tuple.point(2.0, 3.0, 4.0)
+        assertEquals(Tuple.point(2.0, 3.0, 7.0), transform * point)
+    }
+
+    @Test
+    fun testChainedTransformations() {
+        val point = Tuple.point(1.0, 0.0, 1.0)
+        val matrixA = Matrix.rotationX(PI / 2)
+        val matrixB = Matrix.scaling(5.0, 5.0, 5.0)
+        val matrixC = Matrix.translation(10.0, 5.0, 7.0)
+
+        val point2 = matrixA * point
+        assertEquals(Tuple.point(1.0, -1.0, 0.0), point2)
+
+        val point3 = matrixB * point2
+        assertEquals(Tuple.point(5.0, -5.0, 0.0), point3)
+
+        val point4 = matrixC * point3
+        assertEquals(Tuple.point(15.0, 0.0, 7.0), point4)
+
+        assertEquals(Tuple.point(15.0, 0.0, 7.0), matrixC * matrixB * matrixA * point)
     }
 
 }
