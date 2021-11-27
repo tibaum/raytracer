@@ -20,17 +20,19 @@ class Ray(val origin: Tuple, val direction: Tuple) {
     /**
      * Computes the distance between the origin of the ray and its intersection points with the sphere.
      */
-    fun intersect(sphere: Sphere): List<Double> {
+    fun intersect(sphere: Sphere): Intersections {
         val sphereToRay = origin - sphere.center
         val a = direction.dot(direction)
         val b = 2 * direction.dot(sphereToRay)
         val c = sphereToRay.dot(sphereToRay) - 1
         val discriminant = b.pow(2) - 4 * a * c
         if (discriminant < 0)
-            return emptyList()
+            return Intersections()
         val t1 = (-b - sqrt(discriminant)) / (2 * a)
         val t2 = (-b + sqrt(discriminant)) / (2 * a)
-        return listOf(t1, t2)
+        val intersection1 = Intersection(t1, sphere)
+        val intersection2 = Intersection(t2, sphere)
+        return Intersections(intersection1, intersection2)
     }
 
 }

@@ -46,10 +46,10 @@ class RayTest {
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere.unit()
-        val intersections: List<Double> = ray.intersect(sphere)
-        assertEquals(2, intersections.size)
-        assertEquals(4.0, intersections[0])
-        assertEquals(6.0, intersections[1])
+        val intersections = ray.intersect(sphere)
+        assertEquals(2, intersections.count)
+        assertEquals(4.0, intersections[0].time)
+        assertEquals(6.0, intersections[1].time)
     }
 
     @Test
@@ -58,10 +58,10 @@ class RayTest {
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere.unit()
-        val intersections: List<Double> = ray.intersect(sphere)
-        assertEquals(2, intersections.size)
-        assertEquals(5.0, intersections[0])
-        assertEquals(5.0, intersections[1])
+        val intersections = ray.intersect(sphere)
+        assertEquals(2, intersections.count)
+        assertEquals(5.0, intersections[0].time)
+        assertEquals(5.0, intersections[1].time)
     }
 
     @Test
@@ -70,8 +70,8 @@ class RayTest {
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere.unit()
-        val intersections: List<Double> = ray.intersect(sphere)
-        assertEquals(0, intersections.size)
+        val intersections = ray.intersect(sphere)
+        assertEquals(0, intersections.count)
     }
 
     @Test
@@ -80,10 +80,10 @@ class RayTest {
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere.unit()
-        val intersections: List<Double> = ray.intersect(sphere)
-        assertEquals(2, intersections.size)
-        assertEquals(-1.0, intersections[0])
-        assertEquals(1.0, intersections[1])
+        val intersections = ray.intersect(sphere)
+        assertEquals(2, intersections.count)
+        assertEquals(-1.0, intersections[0].time)
+        assertEquals(1.0, intersections[1].time)
     }
 
     @Test
@@ -92,10 +92,22 @@ class RayTest {
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere.unit()
-        val intersections: List<Double> = ray.intersect(sphere)
-        assertEquals(2, intersections.size)
-        assertEquals(-6.0, intersections[0])
-        assertEquals(-4.0, intersections[1])
+        val intersections = ray.intersect(sphere)
+        assertEquals(2, intersections.count)
+        assertEquals(-6.0, intersections[0].time)
+        assertEquals(-4.0, intersections[1].time)
+    }
+
+    @Test
+    fun testIntersectSetsObjectOnTheIntersection() {
+        val origin = Tuple.point(0.0, 0.0, -5.0)
+        val direction = Tuple.vector(0.0, 0.0, 1.0)
+        val ray = Ray(origin, direction)
+        val sphere = Sphere.unit()
+        val intersections = ray.intersect(sphere)
+        assertEquals(2, intersections.count)
+        assertEquals(sphere, intersections[0].sphere)
+        assertEquals(sphere, intersections[1].sphere)
     }
 
 }
