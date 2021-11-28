@@ -30,4 +30,86 @@ class IntersectionTest {
         assertEquals(2.0, intersections[1].time)
     }
 
+    @Test
+    fun testIntersectionComparison() {
+        val sphere = Sphere.unit()
+        val i1 = Intersection(1.0, sphere)
+        val i2 = Intersection(2.0, sphere)
+        val i3 = Intersection(2.0, sphere)
+        assertEquals(-1, i1.compareTo(i2))
+        assertEquals(0, i1.compareTo(i1))
+        assertEquals(1, i2.compareTo(i1))
+        assertEquals(0, i2.compareTo(i3))
+    }
+
+    @Test
+    fun testIntersectionsAreSorted() {
+        val sphere = Sphere.unit()
+        val i1 = Intersection(7.0, sphere)
+        val i2 = Intersection(3.0, sphere)
+        val i3 = Intersection(-2.0, sphere)
+        val i4 = Intersection(5.0, sphere)
+        val i5 = Intersection(3.0, sphere)
+        val intersections = Intersections(i1, i2, i3, i4, i5)
+        assertEquals(5, intersections.count)
+        assertEquals(i3, intersections[0])
+        assertEquals(i2, intersections[1])
+        assertEquals(i5, intersections[2])
+        assertEquals(i4, intersections[3])
+        assertEquals(i1, intersections[4])
+    }
+
+    @Test
+    fun testHitAllIntersectionsWithPositiveTime() {
+        val sphere = Sphere.unit()
+        val i1 = Intersection(1.0, sphere)
+        val i2 = Intersection(2.0, sphere)
+        val intersections = Intersections(i2, i1)
+        assertEquals(i1, intersections.hit())
+    }
+
+    @Test
+    fun testHitSomeIntersectionsWithNegativeTime() {
+        val sphere = Sphere.unit()
+        val i1 = Intersection(-1.0, sphere)
+        val i2 = Intersection(1.0, sphere)
+        val intersections = Intersections(i2, i1)
+        assertEquals(i2, intersections.hit())
+    }
+
+    @Test
+    fun testHitAllIntersectionsWithNegativeTime() {
+        val sphere = Sphere.unit()
+        val i1 = Intersection(-2.0, sphere)
+        val i2 = Intersection(-1.0, sphere)
+        val intersections = Intersections(i2, i1)
+        assertEquals(null, intersections.hit())
+    }
+
+    @Test
+    fun testHitIsAlwaysTheLowestNonNegativeValue() {
+        val sphere = Sphere.unit()
+        val i1 = Intersection(5.0, sphere)
+        val i2 = Intersection(7.0, sphere)
+        val i3 = Intersection(-3.0, sphere)
+        val i4 = Intersection(2.0, sphere)
+        val intersections = Intersections(i1, i2, i3, i4)
+        assertEquals(i4, intersections.hit())
+    }
+
+    @Test
+    fun testHitWithZeroAsTheLowestNonNegativeValue() {
+        val sphere = Sphere.unit()
+        val i1 = Intersection(-3.0, sphere)
+        val i2 = Intersection(0.0, sphere)
+        val intersections = Intersections(i1, i2)
+        assertEquals(i2, intersections.hit())
+    }
+
+    @Test
+    fun testHitWithNoIntersectionAvailable() {
+        val intersections = Intersections()
+        assertEquals(null, intersections.hit())
+    }
+
 }

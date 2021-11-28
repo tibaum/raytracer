@@ -1,3 +1,10 @@
 package raytracer.elements
 
-class Intersection(val time: Double, val sphere: Sphere)
+class Intersection(val time: Double, val sphere: Sphere) : Comparable<Intersection> {
+
+    override fun compareTo(other: Intersection): Int =
+        if (time < other.time) -1
+        else if (time > other.time) 1
+        else 0
+
+}
