@@ -21,9 +21,16 @@ class Ray(val origin: Tuple, val direction: Tuple) {
      * Computes the distance between the origin of the ray and its intersection points with the sphere.
      */
     fun intersect(sphere: Sphere): Intersections {
-        val sphereToRay = origin - sphere.center
-        val a = direction.dot(direction)
-        val b = 2 * direction.dot(sphereToRay)
+        /*
+         * Move the ray such that the relationship between the original ray and
+         * the original sphere is equal to the relationship between the new ray
+         * and the unit sphere.
+        */
+        val ray = transformByMatrix(sphere.transformationMatrix.inverse())
+
+        val sphereToRay = ray.origin - sphere.center
+        val a = ray.direction.dot(ray.direction)
+        val b = 2 * ray.direction.dot(sphereToRay)
         val c = sphereToRay.dot(sphereToRay) - 1
         val discriminant = b.pow(2) - 4 * a * c
         if (discriminant < 0)
@@ -34,5 +41,7 @@ class Ray(val origin: Tuple, val direction: Tuple) {
         val intersection2 = Intersection(t2, sphere)
         return Intersections(intersection1, intersection2)
     }
+
+    fun transformByMatrix(matrix: Matrix) = Ray(matrix * origin, matrix * direction)
 
 }
