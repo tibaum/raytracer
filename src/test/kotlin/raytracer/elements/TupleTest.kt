@@ -184,4 +184,21 @@ class TupleTest {
         assertEquals(Tuple(1.0, -2.0, 1.0), vector2.cross(vector1))
     }
 
+    @Test
+    fun testAsVector() {
+        val tuple = Tuple(1.0, 2.0, 3.0, 4.0)
+        val vector = tuple.asVector()
+        assertEquals(Tuple(1.0, 2.0, 3.0, 4.0), tuple)
+        assertEquals(Tuple(1.0, 2.0, 3.0, 0.0), vector)
+    }
+
+    @Test
+    fun testAsVectorExpectsTupleSize4() {
+        assertThrows(IllegalArgumentException::class.java) { Tuple().asVector() }
+        assertThrows(IllegalArgumentException::class.java) { Tuple(1.0).asVector() }
+        assertThrows(IllegalArgumentException::class.java) { Tuple(1.0, 2.0).asVector() }
+        assertThrows(IllegalArgumentException::class.java) { Tuple(1.0, 2.0, 3.0).asVector() }
+        assertThrows(IllegalArgumentException::class.java) { Tuple(1.0, 2.0, 3.0, 4.0, 5.0).asVector() }
+    }
+
 }

@@ -11,4 +11,15 @@ class Sphere(val transformationMatrix: Matrix = Matrix.identity(4)) {
     val center = Tuple.point(0.0, 0.0, 0.0)
     val radius = 1.0
 
+    /**
+     * Computes the surface normal, i.e., a vector that is perpendicular to the surface of the sphere.
+     */
+    fun normalAt(worldPoint: Tuple): Tuple {
+        val inverseTransformation = transformationMatrix.inverse()
+        val objectPoint = inverseTransformation * worldPoint
+        val objectNormal = objectPoint - center
+        val worldNormal = inverseTransformation.transpose() * objectNormal
+        return worldNormal.asVector().normalize()
+    }
+
 }

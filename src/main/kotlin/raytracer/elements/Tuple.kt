@@ -17,6 +17,22 @@ class Tuple(private vararg val values: Double) {
     fun isPoint() = values.size == 4 && values[3] == 1.0
     fun isVector() = values.size == 4 && values[3] == 0.0
 
+    /**
+     * Creates a tuple with the first three elements unchanged and the fourth element set to 0.0.
+     * @throws IllegalArgumentException if [size] is not equal to 4
+     */
+    fun asVector(): Tuple {
+        assertSize4()
+        val backingArray = toDoubleArray()
+        backingArray[3] = 0.0
+        return Tuple(*backingArray)
+    }
+
+    private fun assertSize4() {
+        if (size != 4)
+            throw IllegalArgumentException("size must be equal to 4")
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is Tuple) return false
