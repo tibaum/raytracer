@@ -2,6 +2,7 @@ package raytracer.elements
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import kotlin.math.sqrt
 
 class TupleTest {
 
@@ -199,6 +200,20 @@ class TupleTest {
         assertThrows(IllegalArgumentException::class.java) { Tuple(1.0, 2.0).asVector() }
         assertThrows(IllegalArgumentException::class.java) { Tuple(1.0, 2.0, 3.0).asVector() }
         assertThrows(IllegalArgumentException::class.java) { Tuple(1.0, 2.0, 3.0, 4.0, 5.0).asVector() }
+    }
+
+    @Test
+    fun testReflectVectorApproachingAt45Degrees() {
+        val vector = Tuple.vector(1.0, -1.0, 0.0)
+        val surfaceNormal = Tuple.vector(0.0, 1.0, 0.0)
+        assertEquals(Tuple.vector(1.0, 1.0, 0.0), vector.reflectAround(surfaceNormal))
+    }
+
+    @Test
+    fun testReflectVectorOffSlantedSurface() {
+        val vector = Tuple.vector(0.0, -1.0, 0.0)
+        val surfaceNormal = Tuple.vector(sqrt(2.0) / 2.0, sqrt(2.0) / 2.0, 0.0)
+        assertEquals(Tuple.vector(1.0, 0.0, 0.0), vector.reflectAround(surfaceNormal))
     }
 
 }

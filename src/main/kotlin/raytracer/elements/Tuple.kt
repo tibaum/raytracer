@@ -122,6 +122,8 @@ class Tuple(private vararg val values: Double) {
         return Tuple(*newValues)
     }
 
+    fun reflectAround(surfaceNormal: Tuple): Tuple = this - surfaceNormal * 2.0 * this.dot(surfaceNormal)
+
 }
 
 typealias Color = Tuple
