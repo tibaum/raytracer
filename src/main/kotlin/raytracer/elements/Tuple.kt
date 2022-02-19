@@ -22,15 +22,10 @@ class Tuple(private vararg val values: Double) {
      * @throws IllegalArgumentException if [size] is not equal to 4
      */
     fun asVector(): Tuple {
-        assertSize4()
+        require(size == 4) { "size must be equal to 4" }
         val backingArray = toDoubleArray()
         backingArray[3] = 0.0
         return Tuple(*backingArray)
-    }
-
-    private fun assertSize4() {
-        if (size != 4)
-            throw IllegalArgumentException("size must be equal to 4")
     }
 
     override fun equals(other: Any?): Boolean {

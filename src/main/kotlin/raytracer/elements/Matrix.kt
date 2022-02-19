@@ -6,16 +6,16 @@ import kotlin.math.sin
 
 data class Dim(val nrow: Int, val ncol: Int) {
     init {
-        if (nrow < 1 || ncol < 1)
-            throw IllegalArgumentException("nrow and ncol must be greater than 0")
+        require(nrow > 0 && ncol > 0) { "nrow and ncol must be positive" }
     }
 }
 
 class Matrix(private val dim: Dim, private vararg val entries: Double) {
 
     init {
-        if (entries.size != dim.nrow * dim.ncol)
-            throw IllegalArgumentException("entries.size=${entries.size}, dim.nrow=${dim.nrow}, dim.ncol=${dim.ncol}")
+        require(entries.size == dim.nrow * dim.ncol) {
+            "entries.size=${entries.size}, dim.nrow=${dim.nrow}, dim.ncol=${dim.ncol}"
+        }
     }
 
     companion object {
@@ -154,8 +154,9 @@ class Matrix(private val dim: Dim, private vararg val entries: Double) {
     }
 
     operator fun times(other: Matrix): Matrix {
-        if (dim.ncol != other.dim.nrow)
-            throw IllegalArgumentException()
+        require(dim.ncol == other.dim.nrow) {
+            "The number of columns in the first matrix must match the number of rows in the second matrix."
+        }
 
         fun entry(row: Int, column: Int): Double {
             var result = 0.0

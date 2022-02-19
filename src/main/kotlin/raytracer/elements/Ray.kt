@@ -6,10 +6,8 @@ import kotlin.math.sqrt
 class Ray(val origin: Tuple, val direction: Tuple) {
 
     init {
-        if (!origin.isPoint())
-            throw IllegalArgumentException("origin must be a point")
-        if (!direction.isVector())
-            throw IllegalArgumentException("direction must be a vector")
+        require(origin.isPoint()) { "origin must be a point" }
+        require(direction.isVector()) { "direction must be a vector" }
     }
 
     /**
