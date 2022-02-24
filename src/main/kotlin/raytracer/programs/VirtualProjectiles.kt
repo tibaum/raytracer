@@ -1,6 +1,9 @@
 package raytracer.programs
 
-import raytracer.elements.*
+import raytracer.elements.Canvas
+import raytracer.elements.Environment
+import raytracer.elements.Projectile
+import raytracer.elements.Tuple
 import java.io.File
 
 fun main() {
@@ -20,7 +23,7 @@ fun main() {
         val x = projectile.position[0].toInt()
         val y = projectile.position[1].toInt()
         if (x < canvas.width && y < canvas.height)
-            canvas.writePixel(x, canvas.height - y, Color(1.0, 0.0, 0.0))
+            canvas.writePixel(x, canvas.height - y, Tuple.color(1.0, 0.0, 0.0))
     }
 
     File("projectiles.ppm").writeText(canvas.toPPM())

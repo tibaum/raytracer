@@ -49,6 +49,26 @@ class TupleTest {
     }
 
     @Test
+    fun testIsColor() {
+        assertTrue(Tuple(1.0, 0.2, 0.1).isColor())
+        assertFalse(Tuple(1.0, 0.2).isColor())
+        assertFalse(Tuple(1.0, 0.2, 0.1, 0.3).isColor())
+        assertFalse(Tuple(0.0, 0.0, -0.01).isColor())
+        assertFalse(Tuple(0.0, -0.01, 0.0).isColor())
+        assertFalse(Tuple(-0.01, 0.0, 0.0).isColor())
+        assertFalse(Tuple(1.01, 1.0, 1.0).isColor())
+        assertFalse(Tuple(1.0, 1.01, 1.0).isColor())
+        assertFalse(Tuple(1.0, 1.0, 1.01).isColor())
+    }
+
+    @Test
+    fun testColorCreation() {
+        assertDoesNotThrow { Tuple.color(0.0, 0.0, 0.0) }
+        assertDoesNotThrow { Tuple.color(1.0, 1.0, 1.0) }
+        assertThrows(IllegalArgumentException::class.java) { Tuple.color(1.01, 0.0, 0.0) }
+    }
+
+    @Test
     fun testNotEqual() {
         val tuple = Tuple(0.0)
         val tuple2 = Tuple(0.0, 1.0)

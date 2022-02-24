@@ -7,8 +7,8 @@ class ColorTest {
 
     @Test
     fun testHadamardProduct() {
-        val color1 = Tuple(1.0, 0.2, 0.4)
-        val color2 = Tuple(0.9, 1.0, 0.1)
+        val color1 = Tuple.color(1.0, 0.2, 0.4)
+        val color2 = Tuple.color(0.9, 1.0, 0.1)
         assertEquals(Tuple(0.9, 0.2, 0.04), color1.hadamardProduct(color2))
     }
 

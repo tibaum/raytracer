@@ -10,13 +10,13 @@ class CanvasTest {
         val canvas = Canvas(10, 20)
         assertEquals(10, canvas.width)
         assertEquals(20, canvas.height)
-        canvas.pixels.forEach { color -> assertEquals(Color(0.0, 0.0, 0.0), color) }
+        canvas.pixels.forEach { color -> assertEquals(Tuple.color(0.0, 0.0, 0.0), color) }
     }
 
     @Test
     fun testChangePixel() {
         val canvas = Canvas(10, 20)
-        val red = Color(1.0, 0.0, 0.0)
+        val red = Tuple.color(1.0, 0.0, 0.0)
         canvas.writePixel(2, 3, red)
         assertEquals(red, canvas.pixelAt(2, 3))
     }
@@ -54,7 +54,7 @@ class CanvasTest {
         val canvas = Canvas(10, 2)
         for (column in 0..9) {
             for (row in 0..1) {
-                canvas.writePixel(column, row, Color(1.0, 0.8, 0.6))
+                canvas.writePixel(column, row, Tuple.color(1.0, 0.8, 0.6))
             }
         }
         val lines = canvas.toPPM().lines()

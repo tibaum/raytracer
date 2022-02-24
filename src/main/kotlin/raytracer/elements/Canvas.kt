@@ -5,7 +5,7 @@ import kotlin.math.roundToInt
 class Canvas(
     val width: Int,
     val height: Int,
-    val pixels: Array<Color> = Array(width * height) { Color(0.0, 0.0, 0.0) }
+    val pixels: Array<Color> = Array(width * height) { Tuple.color(0.0, 0.0, 0.0) }
 ) {
 
     fun pixelAt(column: Int, row: Int) = pixels[index(column, row)]

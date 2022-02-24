@@ -7,6 +7,10 @@ class Tuple(private vararg val values: Double) {
     companion object {
         fun vector(x: Double, y: Double, z: Double) = Tuple(x, y, z, 0.0)
         fun point(x: Double, y: Double, z: Double) = Tuple(x, y, z, 1.0)
+        fun color(red: Double, green: Double, blue: Double) = with(Tuple(red, green, blue)) {
+            require(isColor()) { "Values must be between 0 and 1" }
+            this
+        }
     }
 
     val size: Int
@@ -16,6 +20,7 @@ class Tuple(private vararg val values: Double) {
 
     fun isPoint() = values.size == 4 && values[3] == 1.0
     fun isVector() = values.size == 4 && values[3] == 0.0
+    fun isColor() = values.size == 3 && values.all { it in 0.0..1.0 }
 
     /**
      * Creates a tuple with the first three elements unchanged and the fourth element set to 0.0.

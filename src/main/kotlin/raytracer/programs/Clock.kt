@@ -1,7 +1,6 @@
 package raytracer.programs
 
 import raytracer.elements.Canvas
-import raytracer.elements.Color
 import raytracer.elements.Matrix
 import raytracer.elements.Tuple
 import java.io.File
@@ -37,7 +36,7 @@ fun main() {
     val clockRadiusScaling = Matrix.scaling(clockRadius, 0.0, clockRadius)
 
     hours.map { hour -> clockRadiusScaling * hour + center }
-        .forEach { hour -> canvas.writePixel(hour[0].roundToInt(), hour[2].roundToInt(), Color(1.0, 1.0, 1.0)) }
+        .forEach { hour -> canvas.writePixel(hour[0].roundToInt(), hour[2].roundToInt(), Tuple.color(1.0, 1.0, 1.0)) }
 
     File("clock.ppm").writeText(canvas.toPPM())
 

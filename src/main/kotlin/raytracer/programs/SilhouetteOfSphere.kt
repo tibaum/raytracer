@@ -22,7 +22,7 @@ fun main() {
     val halfWallSize = wallSize / 2.0
 
     val canvas = Canvas(canvasPixels, canvasPixels)
-    val red = Color(1.0, 0.0, 0.0)
+    val red = Tuple.color(1.0, 0.0, 0.0)
     val sphere = Sphere(Matrix.rotationZ(PI / 4) * Matrix.scaling(0.5, 1.0, 1.0))
 
     val timestampCalculatingPixels = LocalDateTime.now()
