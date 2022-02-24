@@ -71,4 +71,74 @@ class SphereTest {
         assertEquals(Tuple.vector(0.0, 0.97014, -0.24254), normal)
     }
 
+    @Test
+    fun testLightningWithEyeBetweenLightAndSurface() {
+        val sphere = Sphere()
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val pointLight = PointLight(
+            position = Tuple.point(0.0, 0.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = sphere.lightning(pointLight, position, eyeVector, normalVector)
+        assertEquals(Tuple(1.9, 1.9, 1.9), color)
+    }
+
+    @Test
+    fun testLightningWithEyeBetweenLightAndSurfaceEyeOffset45Degrees() {
+        val sphere = Sphere()
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 0.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = sphere.lightning(light, position, eyeVector, normalVector)
+        assertEquals(Tuple.color(1.0, 1.0, 1.0), color)
+    }
+
+    @Test
+    fun testLightningWithEyeOppositeSurfaceLightOffset45Degrees() {
+        val sphere = Sphere()
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 10.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = sphere.lightning(light, position, eyeVector, normalVector)
+        assertEquals(Tuple(0.7364, 0.7364, 0.7364), color)
+    }
+
+    @Test
+    fun testLightningWithEyeInPathOfReflectionVector() {
+        val sphere = Sphere()
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, -sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 10.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = sphere.lightning(light, position, eyeVector, normalVector)
+        assertEquals(Tuple(1.6364, 1.6364, 1.6364), color)
+    }
+
+    @Test
+    fun testLightningWithLightBehindSurface() {
+        val sphere = Sphere()
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 0.0, 10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = sphere.lightning(light, position, eyeVector, normalVector)
+        assertEquals(Tuple(0.1, 0.1, 0.1), color)
+    }
+
 }
