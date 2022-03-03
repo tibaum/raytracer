@@ -42,4 +42,7 @@ class Ray(val origin: Tuple, val direction: Tuple) {
 
     fun transformByMatrix(matrix: Matrix) = Ray(matrix * origin, matrix * direction)
 
+    fun intersect(world: World): Intersections =
+        world.spheres.map(::intersect).reduce(Intersections::accumulate)
+
 }

@@ -10,7 +10,7 @@ import kotlin.math.pow
  */
 class Sphere(
     val transformationMatrix: Matrix = Matrix.identity(4),
-    private val material: Material = Material(
+    val material: Material = Material(
         surfaceColor = Tuple.color(1.0, 1.0, 1.0),
         ambientReflection = 0.1,
         diffuseReflection = 0.9,
@@ -18,8 +18,6 @@ class Sphere(
         shininess = 200.0
     )
 ) {
-
-    private val black = Tuple.color(0.0, 0.0, 0.0)
 
     val center = Tuple.point(0.0, 0.0, 0.0)
     val radius = 1.0
@@ -46,13 +44,13 @@ class Sphere(
         val ambientContribution = effectiveColor * material.ambientReflection
 
         val diffuseContribution =
-            if (lightDotNormal < 0) black
+            if (lightDotNormal < 0) Tuple.black
             else effectiveColor * material.diffuseReflection * lightDotNormal
 
-        val specularContribution = if (lightDotNormal < 0) black else {
+        val specularContribution = if (lightDotNormal < 0) Tuple.black else {
             val reflectVector = (-lightVector).reflectAround(normalVector)
             val reflectDotEye = reflectVector.dot(eyeVector)
-            if (reflectDotEye <= 0) black
+            if (reflectDotEye <= 0) Tuple.black
             else pointLight.intensity * material.specularReflection * reflectDotEye.pow(material.shininess)
         }
 

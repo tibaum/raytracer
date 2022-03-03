@@ -112,4 +112,26 @@ class IntersectionTest {
         assertEquals(null, intersections.hit())
     }
 
+    @Test
+    fun testAccumulationOfEmptyIntersections() {
+        val intersections = Intersections()
+        val accumulation = intersections.accumulate(Intersections())
+        assertEquals(0, accumulation.count)
+    }
+
+    @Test
+    fun testAccumulationOfIntersectionsIsSorted() {
+        val sphere = Sphere()
+        val i1 = Intersection(7.0, sphere)
+        val i2 = Intersection(3.0, sphere)
+        val i3 = Intersection(-2.0, sphere)
+        val intersections1 = Intersections(i1)
+        val intersections2 = Intersections(i2, i3)
+        val accumulation = intersections1.accumulate(intersections2)
+        assertEquals(3, accumulation.count)
+        assertEquals(i3, accumulation[0])
+        assertEquals(i2, accumulation[1])
+        assertEquals(i1, accumulation[2])
+    }
+
 }

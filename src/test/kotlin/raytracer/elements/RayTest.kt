@@ -146,4 +146,16 @@ class RayTest {
         assertEquals(0, intersections.count)
     }
 
+    @Test
+    fun testIntersectingDefaultWorld() {
+        val world = World()
+        val ray = Ray(Tuple.point(0.0, 0.0, -5.0), Tuple.vector(0.0, 0.0, 1.0))
+        val intersections = ray.intersect(world)
+        assertEquals(4, intersections.count)
+        assertEquals(4.0, intersections[0].time)
+        assertEquals(4.5, intersections[1].time)
+        assertEquals(5.5, intersections[2].time)
+        assertEquals(6.0, intersections[3].time)
+    }
+
 }

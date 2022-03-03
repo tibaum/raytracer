@@ -18,4 +18,6 @@ class Intersections(private vararg val intersections: Intersection) {
      */
     fun hit(): Intersection? = intersections.find { it.time >= 0 }
 
+    fun accumulate(other: Intersections) = Intersections(*intersections, *other.intersections)
+
 }

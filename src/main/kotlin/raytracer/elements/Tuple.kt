@@ -11,6 +11,8 @@ class Tuple(private vararg val values: Double) {
             require(isColor()) { "Values must be between 0 and 1" }
             this
         }
+
+        val black = color(0.0, 0.0, 0.0)
     }
 
     val size: Int

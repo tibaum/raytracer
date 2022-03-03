@@ -95,6 +95,30 @@ class Matrix(private val dim: Dim, private vararg val entries: Double) {
             0.0, 0.0, 0.0, 1.0
         )
 
+        /**
+         * 4x4 matrix which orients the world relative to the eye
+         *
+         * @param from position of the eye
+         * @param to point in the scene at which the eye looks
+         * @param up vector indicating which direction is up
+         */
+        fun viewTransform(from: Tuple, to: Tuple, up: Tuple): Matrix {
+            require(from.isPoint())
+            require(to.isPoint())
+            require(up.isVector())
+            val forward = (to - from).normalize()
+            val upn = up.normalize()
+            val left = forward.cross(upn)
+            val trueUp = left.cross(forward)
+            val orientation = Matrix(
+                Dim(4, 4),
+                left[0], left[1], left[2], 0.0,
+                trueUp[0], trueUp[1], trueUp[2], 0.0,
+                -forward[0], -forward[1], -forward[2], 0.0,
+                0.0, 0.0, 0.0, 1.0
+            )
+            return orientation * translation(-from[0], -from[1], -from[2])
+        }
     }
 
     operator fun get(row: Int, column: Int): Double {

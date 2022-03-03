@@ -755,4 +755,68 @@ class MatrixTest {
         assertEquals(Tuple.point(15.0, 0.0, 7.0), matrixC * matrixB * matrixA * point)
     }
 
+    @Test
+    fun testCreateTransformationMatrixForDefaultOrientation() {
+        val from = Tuple.point(0.0, 0.0, 0.0)
+        val to = Tuple.point(0.0, 0.0, -1.0)
+        val up = Tuple.vector(0.0, 1.0, 0.0)
+        val matrix = Matrix.viewTransform(from, to, up)
+        assertEquals(Matrix.identity(4), matrix)
+    }
+
+    @Test
+    fun testCreateTransformationMatrixLookingInPositiveZDirection() {
+        val from = Tuple.point(0.0, 0.0, 0.0)
+        val to = Tuple.point(0.0, 0.0, 1.0)
+        val up = Tuple.vector(0.0, 1.0, 0.0)
+        val matrix = Matrix.viewTransform(from, to, up)
+        assertEquals(Matrix.scaling(-1.0, 1.0, -1.0), matrix)
+    }
+
+    @Test
+    fun testCreateTransformationMatrixWhichMovesTheWorld() {
+        val from = Tuple.point(0.0, 0.0, 8.0)
+        val to = Tuple.point(0.0, 0.0, 0.0)
+        val up = Tuple.vector(0.0, 1.0, 0.0)
+        val matrix = Matrix.viewTransform(from, to, up)
+        assertEquals(Matrix.translation(0.0, 0.0, -8.0), matrix)
+    }
+
+    @Test
+    fun testCreateArbitraryTransformationMatrix() {
+        val from = Tuple.point(1.0, 3.0, 2.0)
+        val to = Tuple.point(4.0, -2.0, 8.0)
+        val up = Tuple.vector(1.0, 1.0, 0.0)
+        val expectedMatrix = Matrix(
+            Dim(4, 4),
+            -0.50709, 0.50709, 0.67612, -2.36643,
+            0.76772, 0.60609, 0.12122, -2.82843,
+            -0.35857, 0.59761, -0.71714, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+        assertEquals(expectedMatrix, Matrix.viewTransform(from, to, up))
+    }
+
+    @Test
+    fun testViewTransformIsCalledWithIllegalArguments() {
+        val from = Tuple.point(1.0, 3.0, 2.0)
+        val to = Tuple.point(4.0, -2.0, 8.0)
+        val up = Tuple.vector(1.0, 1.0, 0.0)
+        assertThrows(IllegalArgumentException::class.java) { Matrix.viewTransform(Tuple.vector(1.0, 3.0, 2.0), to, up) }
+        assertThrows(IllegalArgumentException::class.java) {
+            Matrix.viewTransform(
+                from,
+                Tuple.vector(4.0, -2.0, 8.0),
+                up
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            Matrix.viewTransform(
+                from,
+                to,
+                Tuple.point(1.0, 1.0, 0.0)
+            )
+        }
+    }
+
 }
