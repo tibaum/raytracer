@@ -55,7 +55,8 @@ fun main() {
                     pointLight = pointLight,
                     illuminatedPoint = pointWhereRayHitsSphere,
                     eyeVector = -ray.direction,
-                    normalVector = hit.sphere.normalAt(pointWhereRayHitsSphere)
+                    normalVector = hit.sphere.normalAt(pointWhereRayHitsSphere),
+                    inShadow = false
                 )
                 canvas.writePixel(x, y, color)
             }

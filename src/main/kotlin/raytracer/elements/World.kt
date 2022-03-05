@@ -34,12 +34,24 @@ class World(
             pointLight,
             computation.intersectionPoint,
             computation.eyeVector,
-            computation.normalVector
+            computation.normalVector,
+            isShadowed(computation.overPoint)
         )
 
     fun colorAtIntersection(ray: Ray): Tuple = with(ray.intersect(this)) {
         if (hit() == null) Tuple.black
         else shadeHit(ShadingPreComputation.of(ray, hit()!!))
+    }
+
+    fun isShadowed(point: Tuple): Boolean {
+        require(point.isPoint())
+        val v = pointLight.position - point
+        val distance = v.magnitude()
+        val direction = v.normalize()
+        val ray = Ray(point, direction)
+        val intersections = ray.intersect(this)
+        val hit = intersections.hit()
+        return hit != null && hit.time < distance
     }
 
 }

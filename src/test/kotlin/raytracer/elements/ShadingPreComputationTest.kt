@@ -1,7 +1,6 @@
 package raytracer.elements
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class ShadingPreComputationTest {
@@ -41,6 +40,18 @@ class ShadingPreComputationTest {
                 0.1,
                 Sphere(),
                 Tuple.vector(1.0, 1.0, 1.0),
+                Tuple.point(1.0, 1.0, 1.0),
+                Tuple.vector(1.0, 1.0, 1.0),
+                Tuple.vector(1.0, 1.0, 1.0),
+                false
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            ShadingPreComputation(
+                0.1,
+                Sphere(),
+                Tuple.point(1.0, 1.0, 1.0),
+                Tuple.vector(1.0, 1.0, 1.0),
                 Tuple.vector(1.0, 1.0, 1.0),
                 Tuple.vector(1.0, 1.0, 1.0),
                 false
@@ -52,6 +63,7 @@ class ShadingPreComputationTest {
                 Sphere(),
                 Tuple.point(1.0, 1.0, 1.0),
                 Tuple.point(1.0, 1.0, 1.0),
+                Tuple.point(1.0, 1.0, 1.0),
                 Tuple.vector(1.0, 1.0, 1.0),
                 false
             )
@@ -61,11 +73,22 @@ class ShadingPreComputationTest {
                 0.1,
                 Sphere(),
                 Tuple.point(1.0, 1.0, 1.0),
+                Tuple.point(1.0, 1.0, 1.0),
                 Tuple.vector(1.0, 1.0, 1.0),
                 Tuple.point(1.0, 1.0, 1.0),
                 false
             )
         }
+    }
+
+    @Test
+    fun testHitShouldOffsetPoint() {
+        val ray = Ray(Tuple.point(0.0, 0.0, -5.0), Tuple.vector(0.0, 0.0, 1.0))
+        val sphere = Sphere(transformationMatrix = Matrix.translation(0.0, 0.0, 1.0))
+        val intersection = Intersection(5.0, sphere)
+        val computation = ShadingPreComputation.of(ray, intersection)
+        assertTrue(computation.overPoint[2] < -EPSILON / 2)
+        assertTrue(computation.intersectionPoint[2] > computation.overPoint[2])
     }
 
 }

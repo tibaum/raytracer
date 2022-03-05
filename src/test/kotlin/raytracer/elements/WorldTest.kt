@@ -1,6 +1,6 @@
 package raytracer.elements
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class WorldTest {
@@ -23,6 +23,18 @@ class WorldTest {
         val intersection = Intersection(0.5, sphere)
         val computation = ShadingPreComputation.of(ray, intersection)
         assertEquals(Tuple.color(0.90498, 0.90498, 0.90498), world.shadeHit(computation))
+    }
+
+    @Test
+    fun testShadeHitWithIntersectionInShadow() {
+        val world = World(
+            pointLight = PointLight(Tuple.point(0.0, 0.0, -10.0), Tuple.color(1.0, 1.0, 1.0)),
+            spheres = listOf(Sphere(), Sphere(transformationMatrix = Matrix.translation(0.0, 0.0, 10.0)))
+        )
+        val ray = Ray(Tuple.point(0.0, 0.0, 5.0), Tuple.vector(0.0, 0.0, 1.0))
+        val intersection = Intersection(4.0, world.spheres[1])
+        val computation = ShadingPreComputation.of(ray, intersection)
+        assertEquals(Tuple.color(0.1, 0.1, 0.1), world.shadeHit(computation))
     }
 
     @Test
@@ -53,6 +65,29 @@ class WorldTest {
         val world = World(spheres = listOf(outerSphere, innerSphere))
         val ray = Ray(Tuple.point(0.0, 0.0, 0.75), Tuple.vector(0.0, 0.0, -1.0))
         assertEquals(innerSphere.material.surfaceColor, world.colorAtIntersection(ray))
+    }
+
+    @Test
+    fun testNoShadowWhenNothingIsCollinearWithPointAndLight() {
+        val world = World()
+        assertFalse(world.isShadowed(Tuple.point(0.0, 10.0, 0.0)))
+    }
+
+    @Test
+    fun testShadowWhenObjectIsBetweenPointAndLight() {
+        val world = World()
+        assertTrue(world.isShadowed(Tuple.point(10.0, -10.0, 10.0)))
+    }
+
+    @Test
+    fun testNoShadowWhenObjectIsBehindPoint() {
+        val world = World()
+        assertFalse(world.isShadowed(Tuple.point(-2.0, 2.0, -2.0)))
+    }
+
+    @Test
+    fun testIsShadowedMustBeCalledWithPoint() {
+        assertThrows(IllegalArgumentException::class.java) { World().isShadowed(Tuple.vector(1.0, 1.0, 1.0)) }
     }
 
 }
