@@ -47,7 +47,7 @@ fun main() {
             val worldX = -halfWallSize + pixelSize * x
             val position = Tuple.point(worldX, worldY, wallZ)
             val ray = Ray(rayOrigin, (position - rayOrigin).normalize())
-            val intersections = ray.intersect(sphere)
+            val intersections = sphere.intersect(ray)
             if (intersections.hit() != null) {
                 val hit = intersections.hit()!!
                 val pointWhereRayHitsSphere = ray.position(hit.time)

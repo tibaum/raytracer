@@ -29,6 +29,9 @@ class World(
     )
 ) {
 
+    fun intersect(ray: Ray): Intersections =
+        spheres.map { it.intersect(ray) }.reduce(Intersections::accumulate)
+
     fun shadeHit(computation: ShadingPreComputation): Tuple =
         computation.sphere.lightning(
             pointLight,
@@ -38,7 +41,7 @@ class World(
             isShadowed(computation.overPoint)
         )
 
-    fun colorAtIntersection(ray: Ray): Tuple = with(ray.intersect(this)) {
+    fun colorAtIntersection(ray: Ray): Tuple = with(intersect(ray)) {
         if (hit() == null) Tuple.black
         else shadeHit(ShadingPreComputation.of(ray, hit()!!))
     }
@@ -49,7 +52,7 @@ class World(
         val distance = v.magnitude()
         val direction = v.normalize()
         val ray = Ray(point, direction)
-        val intersections = ray.intersect(this)
+        val intersections = intersect(ray)
         val hit = intersections.hit()
         return hit != null && hit.time < distance
     }
