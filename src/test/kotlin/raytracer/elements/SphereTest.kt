@@ -49,90 +49,6 @@ class SphereTest {
     }
 
     @Test
-    fun testLightningWithEyeBetweenLightAndSurface() {
-        val sphere = Sphere()
-        val position = Tuple.point(0.0, 0.0, 0.0)
-        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
-        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
-        val pointLight = PointLight(
-            position = Tuple.point(0.0, 0.0, -10.0),
-            intensity = Tuple.color(1.0, 1.0, 1.0)
-        )
-        val color = sphere.lightning(pointLight, position, eyeVector, normalVector, false)
-        assertEquals(Tuple(1.9, 1.9, 1.9), color)
-    }
-
-    @Test
-    fun testLightningWithEyeBetweenLightAndSurfaceEyeOffset45Degrees() {
-        val sphere = Sphere()
-        val position = Tuple.point(0.0, 0.0, 0.0)
-        val eyeVector = Tuple.vector(0.0, sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0)
-        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
-        val light = PointLight(
-            position = Tuple.point(0.0, 0.0, -10.0),
-            intensity = Tuple.color(1.0, 1.0, 1.0)
-        )
-        val color = sphere.lightning(light, position, eyeVector, normalVector, false)
-        assertEquals(Tuple.color(1.0, 1.0, 1.0), color)
-    }
-
-    @Test
-    fun testLightningWithEyeOppositeSurfaceLightOffset45Degrees() {
-        val sphere = Sphere()
-        val position = Tuple.point(0.0, 0.0, 0.0)
-        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
-        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
-        val light = PointLight(
-            position = Tuple.point(0.0, 10.0, -10.0),
-            intensity = Tuple.color(1.0, 1.0, 1.0)
-        )
-        val color = sphere.lightning(light, position, eyeVector, normalVector, false)
-        assertEquals(Tuple(0.7364, 0.7364, 0.7364), color)
-    }
-
-    @Test
-    fun testLightningWithEyeInPathOfReflectionVector() {
-        val sphere = Sphere()
-        val position = Tuple.point(0.0, 0.0, 0.0)
-        val eyeVector = Tuple.vector(0.0, -sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0)
-        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
-        val light = PointLight(
-            position = Tuple.point(0.0, 10.0, -10.0),
-            intensity = Tuple.color(1.0, 1.0, 1.0)
-        )
-        val color = sphere.lightning(light, position, eyeVector, normalVector, false)
-        assertEquals(Tuple(1.6364, 1.6364, 1.6364), color)
-    }
-
-    @Test
-    fun testLightningWithLightBehindSurface() {
-        val sphere = Sphere()
-        val position = Tuple.point(0.0, 0.0, 0.0)
-        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
-        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
-        val light = PointLight(
-            position = Tuple.point(0.0, 0.0, 10.0),
-            intensity = Tuple.color(1.0, 1.0, 1.0)
-        )
-        val color = sphere.lightning(light, position, eyeVector, normalVector, false)
-        assertEquals(Tuple(0.1, 0.1, 0.1), color)
-    }
-
-    @Test
-    fun testLightningWithSurfaceInShadow() {
-        val sphere = Sphere()
-        val position = Tuple.point(0.0, 0.0, 0.0)
-        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
-        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
-        val pointLight = PointLight(
-            position = Tuple.point(0.0, 0.0, -10.0),
-            intensity = Tuple.color(1.0, 1.0, 1.0)
-        )
-        val color = sphere.lightning(pointLight, position, eyeVector, normalVector, true)
-        assertEquals(Tuple(0.1, 0.1, 0.1), color)
-    }
-
-    @Test
     fun testComputeIntersection() {
         val origin = Tuple.point(0.0, 0.0, -5.0)
         val direction = Tuple.vector(0.0, 0.0, 1.0)
@@ -198,8 +114,8 @@ class SphereTest {
         val sphere = Sphere()
         val intersections = sphere.localIntersect(ray)
         assertEquals(2, intersections.count)
-        assertEquals(sphere, intersections[0].sphere)
-        assertEquals(sphere, intersections[1].sphere)
+        assertEquals(sphere, intersections[0].shape)
+        assertEquals(sphere, intersections[1].shape)
     }
 
 }

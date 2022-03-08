@@ -9,7 +9,7 @@ class WorldTest {
     fun testShadingIntersection() {
         val world = World()
         val ray = Ray(Tuple.point(0.0, 0.0, -5.0), Tuple.vector(0.0, 0.0, 1.0))
-        val sphere = world.spheres[0]
+        val sphere = world.shapes[0]
         val intersection = Intersection(4.0, sphere)
         val computation = ShadingPreComputation.of(ray, intersection)
         assertEquals(Tuple.color(0.38066, 0.47583, 0.2855), world.shadeHit(computation))
@@ -19,7 +19,7 @@ class WorldTest {
     fun testShadingIntersectionFromInside() {
         val world = World(pointLight = PointLight(Tuple.point(0.0, 0.25, 0.0), Tuple.color(1.0, 1.0, 1.0)))
         val ray = Ray(Tuple.point(0.0, 0.0, 0.0), Tuple.vector(0.0, 0.0, 1.0))
-        val sphere = world.spheres[1]
+        val sphere = world.shapes[1]
         val intersection = Intersection(0.5, sphere)
         val computation = ShadingPreComputation.of(ray, intersection)
         assertEquals(Tuple.color(0.90498, 0.90498, 0.90498), world.shadeHit(computation))
@@ -29,10 +29,10 @@ class WorldTest {
     fun testShadeHitWithIntersectionInShadow() {
         val world = World(
             pointLight = PointLight(Tuple.point(0.0, 0.0, -10.0), Tuple.color(1.0, 1.0, 1.0)),
-            spheres = listOf(Sphere(), Sphere(transformationMatrix = Matrix.translation(0.0, 0.0, 10.0)))
+            shapes = listOf(Sphere(), Sphere(transformationMatrix = Matrix.translation(0.0, 0.0, 10.0)))
         )
         val ray = Ray(Tuple.point(0.0, 0.0, 5.0), Tuple.vector(0.0, 0.0, 1.0))
-        val intersection = Intersection(4.0, world.spheres[1])
+        val intersection = Intersection(4.0, world.shapes[1])
         val computation = ShadingPreComputation.of(ray, intersection)
         assertEquals(Tuple.color(0.1, 0.1, 0.1), world.shadeHit(computation))
     }
@@ -62,7 +62,7 @@ class WorldTest {
         )
         val outerSphere = Sphere(Matrix.identity(4), material)
         val innerSphere = Sphere(Matrix.scaling(0.5, 0.5, 0.5), material)
-        val world = World(spheres = listOf(outerSphere, innerSphere))
+        val world = World(shapes = listOf(outerSphere, innerSphere))
         val ray = Ray(Tuple.point(0.0, 0.0, 0.75), Tuple.vector(0.0, 0.0, -1.0))
         assertEquals(innerSphere.material.surfaceColor, world.colorAtIntersection(ray))
     }

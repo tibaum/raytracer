@@ -51,11 +51,11 @@ fun main() {
             if (intersections.hit() != null) {
                 val hit = intersections.hit()!!
                 val pointWhereRayHitsSphere = ray.position(hit.time)
-                val color = hit.sphere.lightning(
+                val color = hit.shape.lightning(
                     pointLight = pointLight,
                     illuminatedPoint = pointWhereRayHitsSphere,
                     eyeVector = -ray.direction,
-                    normalVector = hit.sphere.normalAt(pointWhereRayHitsSphere),
+                    normalVector = hit.shape.normalAt(pointWhereRayHitsSphere),
                     inShadow = false
                 )
                 canvas.writePixel(x, y, color)

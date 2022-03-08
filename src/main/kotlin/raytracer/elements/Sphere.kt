@@ -36,34 +36,4 @@ class Sphere(
 
     override fun localNormalAt(point: Tuple): Tuple = point - center
 
-    /**
-     * Calculates the shade which makes the object appear three-dimensional.
-     */
-    fun lightning(
-        pointLight: PointLight,
-        illuminatedPoint: Tuple,
-        eyeVector: Tuple,
-        normalVector: Tuple,
-        inShadow: Boolean
-    ): Tuple {
-        val effectiveColor = material.surfaceColor.hadamardProduct(pointLight.intensity)
-        val lightVector = (pointLight.position - illuminatedPoint).normalize()
-        val lightDotNormal = lightVector.dot(normalVector)
-
-        val ambientContribution = effectiveColor * material.ambientReflection
-
-        val diffuseContribution =
-            if (inShadow || lightDotNormal < 0) Tuple.black
-            else effectiveColor * material.diffuseReflection * lightDotNormal
-
-        val specularContribution = if (inShadow || lightDotNormal < 0) Tuple.black else {
-            val reflectVector = (-lightVector).reflectAround(normalVector)
-            val reflectDotEye = reflectVector.dot(eyeVector)
-            if (reflectDotEye <= 0) Tuple.black
-            else pointLight.intensity * material.specularReflection * reflectDotEye.pow(material.shininess)
-        }
-
-        return ambientContribution + diffuseContribution + specularContribution
-    }
-
 }

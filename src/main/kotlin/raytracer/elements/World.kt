@@ -5,7 +5,7 @@ class World(
         position = Tuple.point(-10.0, 10.0, -10.0),
         intensity = Tuple.color(1.0, 1.0, 1.0)
     ),
-    val spheres: List<Sphere> = listOf(
+    val shapes: List<Shape> = listOf(
         Sphere(
             transformationMatrix = Matrix.identity(4),
             material = Material(
@@ -30,10 +30,10 @@ class World(
 ) {
 
     fun intersect(ray: Ray): Intersections =
-        spheres.map { it.intersect(ray) }.reduce(Intersections::accumulate)
+        shapes.map { it.intersect(ray) }.reduce(Intersections::accumulate)
 
     fun shadeHit(computation: ShadingPreComputation): Tuple =
-        computation.sphere.lightning(
+        computation.shape.lightning(
             pointLight,
             computation.intersectionPoint,
             computation.eyeVector,

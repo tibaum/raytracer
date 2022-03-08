@@ -11,7 +11,7 @@ class IntersectionTest {
         val time = 3.5
         val intersection = Intersection(time, sphere)
         assertEquals(time, intersection.time)
-        assertEquals(sphere, intersection.sphere)
+        assertEquals(sphere, intersection.shape)
     }
 
     @Test

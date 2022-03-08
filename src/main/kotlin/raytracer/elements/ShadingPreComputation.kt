@@ -5,7 +5,7 @@ package raytracer.elements
  */
 data class ShadingPreComputation(
     val hitTime: Double,
-    val sphere: Sphere,
+    val shape: Shape,
     val intersectionPoint: Tuple,
     val overPoint: Tuple,
     val eyeVector: Tuple,
@@ -24,13 +24,13 @@ data class ShadingPreComputation(
         fun of(ray: Ray, intersection: Intersection): ShadingPreComputation {
             val pointWhereRayHitsSphere = ray.position(intersection.time)
             val eyeVector = -ray.direction
-            val normalVector = intersection.sphere.normalAt(pointWhereRayHitsSphere)
+            val normalVector = intersection.shape.normalAt(pointWhereRayHitsSphere)
             val intersectionOccursInside = normalVector.dot(eyeVector) < 0
             val resultingNormalVector = if (intersectionOccursInside) -normalVector else normalVector
             val overPoint = pointWhereRayHitsSphere + resultingNormalVector * EPSILON
             return ShadingPreComputation(
                 intersection.time,
-                intersection.sphere,
+                intersection.shape,
                 pointWhereRayHitsSphere,
                 overPoint,
                 eyeVector,

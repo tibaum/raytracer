@@ -31,16 +31,7 @@ class ShapeTest {
 
     @Test
     fun testIntersectingAScaledShapeWithRay() {
-        val shape = object : Shape(transformationMatrix = Matrix.scaling(2.0, 2.0, 2.0)) {
-            lateinit var localRay: Ray
-            override fun localIntersect(ray: Ray): Intersections {
-                localRay = ray
-                return Intersections()
-            }
-
-            override fun localNormalAt(point: Tuple) = Tuple.vector(point[0], point[1], point[2])
-        }
-
+        val shape = createShape(Matrix.scaling(2.0, 2.0, 2.0))
         val ray = Ray(Tuple.point(0.0, 0.0, -5.0), Tuple.vector(0.0, 0.0, 1.0))
         shape.intersect(ray)
         assertEquals(Ray(Tuple.point(0.0, 0.0, -2.5), Tuple.vector(0.0, 0.0, 0.5)), shape.localRay)
@@ -48,16 +39,7 @@ class ShapeTest {
 
     @Test
     fun testIntersectingATranslatedShapeWithRay() {
-        val shape = object : Shape(transformationMatrix = Matrix.translation(5.0, 0.0, 0.0)) {
-            lateinit var localRay: Ray
-            override fun localIntersect(ray: Ray): Intersections {
-                localRay = ray
-                return Intersections()
-            }
-
-            override fun localNormalAt(point: Tuple) = Tuple.vector(point[0], point[1], point[2])
-        }
-
+        val shape = createShape(Matrix.translation(5.0, 0.0, 0.0))
         val ray = Ray(Tuple.point(0.0, 0.0, -5.0), Tuple.vector(0.0, 0.0, 1.0))
         shape.intersect(ray)
         assertEquals(Ray(Tuple.point(-5.0, 0.0, -5.0), Tuple.vector(0.0, 0.0, 1.0)), shape.localRay)
@@ -103,9 +85,95 @@ class ShapeTest {
         assertEquals(Tuple.vector(0.0, 3.0, 0.0), rayTransformed.direction)
     }
 
+    @Test
+    fun testLightningWithEyeBetweenLightAndSurface() {
+        val shape = createShape(Matrix.identity(4))
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val pointLight = PointLight(
+            position = Tuple.point(0.0, 0.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = shape.lightning(pointLight, position, eyeVector, normalVector, false)
+        assertEquals(Tuple(1.9, 1.9, 1.9), color)
+    }
+
+    @Test
+    fun testLightningWithEyeBetweenLightAndSurfaceEyeOffset45Degrees() {
+        val shape = createShape(Matrix.identity(4))
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 0.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = shape.lightning(light, position, eyeVector, normalVector, false)
+        assertEquals(Tuple.color(1.0, 1.0, 1.0), color)
+    }
+
+    @Test
+    fun testLightningWithEyeInPathOfReflectionVector() {
+        val shape = createShape(Matrix.identity(4))
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, -sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 10.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = shape.lightning(light, position, eyeVector, normalVector, false)
+        assertEquals(Tuple(1.6364, 1.6364, 1.6364), color)
+    }
+
+    @Test
+    fun testLightningWithEyeOppositeSurfaceLightOffset45Degrees() {
+        val shape = createShape(Matrix.identity(4))
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 10.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = shape.lightning(light, position, eyeVector, normalVector, false)
+        assertEquals(Tuple(0.7364, 0.7364, 0.7364), color)
+    }
+
+    @Test
+    fun testLightningWithLightBehindSurface() {
+        val shape = createShape(Matrix.identity(4))
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val light = PointLight(
+            position = Tuple.point(0.0, 0.0, 10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = shape.lightning(light, position, eyeVector, normalVector, false)
+        assertEquals(Tuple(0.1, 0.1, 0.1), color)
+    }
+
+    @Test
+    fun testLightningWithSurfaceInShadow() {
+        val shape = createShape(Matrix.identity(4))
+        val position = Tuple.point(0.0, 0.0, 0.0)
+        val eyeVector = Tuple.vector(0.0, 0.0, -1.0)
+        val normalVector = Tuple.vector(0.0, 0.0, -1.0)
+        val pointLight = PointLight(
+            position = Tuple.point(0.0, 0.0, -10.0),
+            intensity = Tuple.color(1.0, 1.0, 1.0)
+        )
+        val color = shape.lightning(pointLight, position, eyeVector, normalVector, true)
+        assertEquals(Tuple(0.1, 0.1, 0.1), color)
+    }
+
     private fun createShape(transformationMatrix: Matrix) =
         object : Shape(transformationMatrix) {
+            lateinit var localRay: Ray
             override fun localIntersect(ray: Ray): Intersections {
+                localRay = ray
                 return Intersections()
             }
 
