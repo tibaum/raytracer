@@ -10,13 +10,8 @@ import kotlin.math.sqrt
  * by the inverse of the transformation matrix and cast at the unit sphere.
  */
 class Sphere(
-    transformationMatrix: Matrix = Matrix.identity(4), material: Material = Material(
-        surfaceColor = Tuple.color(1.0, 1.0, 1.0),
-        ambientReflection = 0.1,
-        diffuseReflection = 0.9,
-        specularReflection = 0.9,
-        shininess = 200.0
-    )
+    transformationMatrix: Matrix = Matrix.identity(4),
+    material: Material = Material()
 ) : Shape(transformationMatrix, material) {
 
     override fun localIntersect(ray: Ray): Intersections {

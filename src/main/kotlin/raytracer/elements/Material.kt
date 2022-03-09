@@ -10,11 +10,11 @@ package raytracer.elements
  * @param shininess controls size and tightness of the specular highlight, a nonnegative value, typically between 10 and 200
  */
 data class Material(
-    val surfaceColor: Tuple,
-    val ambientReflection: Double,
-    val diffuseReflection: Double,
-    val specularReflection: Double,
-    val shininess: Double
+    val surfaceColor: Tuple = Tuple.color(1.0, 1.0, 1.0),
+    val ambientReflection: Double = 0.1,
+    val diffuseReflection: Double = 0.9,
+    val specularReflection: Double = 0.9,
+    val shininess: Double = 200.0
 ) {
 
     init {

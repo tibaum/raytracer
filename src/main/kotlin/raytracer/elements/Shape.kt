@@ -3,14 +3,8 @@ package raytracer.elements
 import kotlin.math.pow
 
 abstract class Shape(
-    val transformationMatrix: Matrix = Matrix.identity(4),
-    val material: Material = Material(
-        surfaceColor = Tuple.color(1.0, 1.0, 1.0),
-        ambientReflection = 0.1,
-        diffuseReflection = 0.9,
-        specularReflection = 0.9,
-        shininess = 200.0
-    )
+    val transformationMatrix: Matrix,
+    val material: Material
 ) {
 
     private val inverseTransformation: Matrix = transformationMatrix.inverse()

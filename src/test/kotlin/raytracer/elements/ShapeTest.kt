@@ -8,28 +8,6 @@ import kotlin.math.sqrt
 class ShapeTest {
 
     @Test
-    fun testDefaultShape() {
-        val shape = object : Shape() {
-            override fun localIntersect(ray: Ray): Intersections {
-                return Intersections()
-            }
-
-            override fun localNormalAt(point: Tuple) = Tuple.vector(point[0], point[1], point[2])
-        }
-
-        assertEquals(Matrix.identity(4), shape.transformationMatrix)
-        assertEquals(
-            Material(
-                surfaceColor = Tuple.color(1.0, 1.0, 1.0),
-                ambientReflection = 0.1,
-                diffuseReflection = 0.9,
-                specularReflection = 0.9,
-                shininess = 200.0
-            ), shape.material
-        )
-    }
-
-    @Test
     fun testIntersectingAScaledShapeWithRay() {
         val shape = createShape(Matrix.scaling(2.0, 2.0, 2.0))
         val ray = Ray(Tuple.point(0.0, 0.0, -5.0), Tuple.vector(0.0, 0.0, 1.0))
@@ -170,7 +148,7 @@ class ShapeTest {
     }
 
     private fun createShape(transformationMatrix: Matrix) =
-        object : Shape(transformationMatrix) {
+        object : Shape(transformationMatrix, Material()) {
             lateinit var localRay: Ray
             override fun localIntersect(ray: Ray): Intersections {
                 localRay = ray

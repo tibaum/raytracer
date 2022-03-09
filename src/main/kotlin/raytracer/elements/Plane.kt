@@ -2,7 +2,10 @@ package raytracer.elements
 
 import kotlin.math.abs
 
-class Plane : Shape() {
+class Plane(
+    transformationMatrix: Matrix = Matrix.identity(4),
+    material: Material = Material()
+) : Shape(transformationMatrix, material) {
 
     override fun localIntersect(ray: Ray): Intersections =
         if (abs(ray.direction[1]) < EPSILON) Intersections()
