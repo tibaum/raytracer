@@ -13,6 +13,7 @@ class Tuple(private vararg val values: Double) {
         }
 
         val black = color(0.0, 0.0, 0.0)
+        val white = color(1.0, 1.0, 1.0)
     }
 
     val size: Int

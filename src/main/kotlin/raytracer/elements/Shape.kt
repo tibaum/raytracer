@@ -7,7 +7,7 @@ abstract class Shape(
     val material: Material
 ) {
 
-    private val inverseTransformation: Matrix = transformationMatrix.inverse()
+    val inverseTransformation: Matrix = transformationMatrix.inverse()
     private val transposedInverseTransformation: Matrix = inverseTransformation.transpose()
 
     val center = Tuple.point(0.0, 0.0, 0.0)
@@ -52,7 +52,10 @@ abstract class Shape(
         normalVector: Tuple,
         inShadow: Boolean
     ): Tuple {
-        val effectiveColor = material.surfaceColor.hadamardProduct(pointLight.intensity)
+        val color =
+            if (material.pattern == null) material.surfaceColor
+            else material.pattern.patternAtShape(this, illuminatedPoint)
+        val effectiveColor = color.hadamardProduct(pointLight.intensity)
         val lightVector = (pointLight.position - illuminatedPoint).normalize()
         val lightDotNormal = lightVector.dot(normalVector)
 

@@ -14,7 +14,8 @@ data class Material(
     val ambientReflection: Double = 0.1,
     val diffuseReflection: Double = 0.9,
     val specularReflection: Double = 0.9,
-    val shininess: Double = 200.0
+    val shininess: Double = 200.0,
+    val pattern: Pattern? = null
 ) {
 
     init {
