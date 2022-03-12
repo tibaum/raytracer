@@ -8,6 +8,7 @@ package raytracer.elements
  * @param diffuseReflection light reflected from a matte surface, a nonnegative value, typically between 0 and 1
  * @param specularReflection reflection of the light source itself, a nonnegative value, typically between 0 and 1
  * @param shininess controls size and tightness of the specular highlight, a nonnegative value, typically between 10 and 200
+ * @param reflective value between 0 (nonreflective) and 1 (mirror)
  */
 data class Material(
     val surfaceColor: Tuple = Tuple.color(1.0, 1.0, 1.0),
@@ -15,7 +16,8 @@ data class Material(
     val diffuseReflection: Double = 0.9,
     val specularReflection: Double = 0.9,
     val shininess: Double = 200.0,
-    val pattern: Pattern? = null
+    val pattern: Pattern? = null,
+    val reflective: Double = 0.0
 ) {
 
     init {
@@ -24,6 +26,7 @@ data class Material(
         require(diffuseReflection >= 0.0) { "diffuseReflection must be nonnegative" }
         require(specularReflection >= 0.0) { "specularReflection must be nonnegative" }
         require(shininess >= 0.0) { "shininess must be nonnegative" }
+        require(reflective in 0.0..1.0) { "reflective must be a number between 0 and 1" }
     }
 
 }

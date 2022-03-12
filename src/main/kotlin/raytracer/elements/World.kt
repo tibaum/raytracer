@@ -1,5 +1,7 @@
 package raytracer.elements
 
+import raytracer.elements.Tuple.Companion.black
+
 class World(
     private val pointLight: PointLight = PointLight(
         position = Tuple.point(-10.0, 10.0, -10.0),
@@ -13,7 +15,9 @@ class World(
                 ambientReflection = 0.1,
                 diffuseReflection = 0.7,
                 specularReflection = 0.2,
-                shininess = 200.0
+                shininess = 200.0,
+                pattern = null,
+                reflective = 0.0
             )
         ),
         Sphere(
@@ -23,28 +27,36 @@ class World(
                 ambientReflection = 0.1,
                 diffuseReflection = 0.9,
                 specularReflection = 0.9,
-                shininess = 200.0
+                shininess = 200.0,
+                pattern = null,
+                reflective = 0.0
             )
         )
     )
 ) {
 
+    private val reflectionCalculationRecursionDepth = 5
+
     fun intersect(ray: Ray): Intersections =
         shapes.map { it.intersect(ray) }.reduce(Intersections::accumulate)
 
-    fun shadeHit(computation: ShadingPreComputation): Tuple =
-        computation.shape.lightning(
+    fun shadeHit(computation: ShadingPreComputation, remaining: Int = reflectionCalculationRecursionDepth): Tuple {
+        val surfaceColor = computation.shape.lightning(
             pointLight,
             computation.intersectionPoint,
             computation.eyeVector,
             computation.normalVector,
             isShadowed(computation.overPoint)
         )
-
-    fun colorAtIntersection(ray: Ray): Tuple = with(intersect(ray)) {
-        if (hit() == null) Tuple.black
-        else shadeHit(ShadingPreComputation.of(ray, hit()!!))
+        val reflectedColor = reflectedColor(computation, remaining)
+        return surfaceColor + reflectedColor
     }
+
+    fun colorAtIntersection(ray: Ray, remaining: Int = reflectionCalculationRecursionDepth): Tuple =
+        with(intersect(ray)) {
+            if (hit() == null) black
+            else shadeHit(ShadingPreComputation.of(ray, hit()!!), remaining.dec())
+        }
 
     fun isShadowed(point: Tuple): Boolean {
         require(point.isPoint())
@@ -56,5 +68,19 @@ class World(
         val hit = intersections.hit()
         return hit != null && hit.time < distance
     }
+
+    fun reflectedColor(
+        computation: ShadingPreComputation,
+        remaining: Int = reflectionCalculationRecursionDepth
+    ): Tuple =
+        when {
+            remaining == 0 -> black
+            computation.shape.material.reflective == 0.0 -> black
+            else -> {
+                val reflectRay = Ray(computation.overPoint, computation.reflectVector)
+                val colorAtIntersection = colorAtIntersection(reflectRay, remaining)
+                colorAtIntersection * computation.shape.material.reflective
+            }
+        }
 
 }

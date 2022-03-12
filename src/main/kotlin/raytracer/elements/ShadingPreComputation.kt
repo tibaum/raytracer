@@ -10,7 +10,8 @@ data class ShadingPreComputation(
     val overPoint: Tuple,
     val eyeVector: Tuple,
     val normalVector: Tuple,
-    val intersectionOccursInside: Boolean
+    val intersectionOccursInside: Boolean,
+    val reflectVector: Tuple
 ) {
 
     init {
@@ -18,6 +19,7 @@ data class ShadingPreComputation(
         require(overPoint.isPoint())
         require(eyeVector.isVector())
         require(normalVector.isVector())
+        require(reflectVector.isVector())
     }
 
     companion object {
@@ -27,6 +29,7 @@ data class ShadingPreComputation(
             val normalVector = intersection.shape.normalAt(pointWhereRayHitsSphere)
             val intersectionOccursInside = normalVector.dot(eyeVector) < 0
             val resultingNormalVector = if (intersectionOccursInside) -normalVector else normalVector
+            val reflectVector = ray.direction.reflectAround(resultingNormalVector)
             val overPoint = pointWhereRayHitsSphere + resultingNormalVector * EPSILON
             return ShadingPreComputation(
                 intersection.time,
@@ -35,7 +38,8 @@ data class ShadingPreComputation(
                 overPoint,
                 eyeVector,
                 resultingNormalVector,
-                intersectionOccursInside
+                intersectionOccursInside,
+                reflectVector
             )
         }
     }

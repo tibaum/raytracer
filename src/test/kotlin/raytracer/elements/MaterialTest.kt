@@ -14,6 +14,26 @@ class MaterialTest {
         assertThrows(IllegalArgumentException::class.java) { Material(Tuple(1.0, 1.0, 1.0), 0.1, -0.9, 0.9, 200.0) }
         assertThrows(IllegalArgumentException::class.java) { Material(Tuple(1.0, 1.0, 1.0), 0.1, 0.9, -0.9, 200.0) }
         assertThrows(IllegalArgumentException::class.java) { Material(Tuple(1.0, 1.0, 1.0), 0.1, 0.9, 0.9, -10.0) }
+        assertThrows(IllegalArgumentException::class.java) {
+            Material(
+                Tuple(1.0, 1.0, 1.0),
+                0.1,
+                0.9,
+                0.9,
+                200.0,
+                reflective = -0.1
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            Material(
+                Tuple(1.0, 1.0, 1.0),
+                0.1,
+                0.9,
+                0.9,
+                200.0,
+                reflective = 1.1
+            )
+        }
     }
 
 }
