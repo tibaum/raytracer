@@ -1,6 +1,8 @@
 package raytracer.elements
 
 import raytracer.elements.Tuple.Companion.black
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class World(
     private val pointLight: PointLight = PointLight(
@@ -49,7 +51,13 @@ class World(
             isShadowed(computation.overPoint)
         )
         val reflectedColor = reflectedColor(computation, remaining)
-        return surfaceColor + reflectedColor
+        val refractedColor = refractedColor(computation, remaining)
+
+        val material = computation.shape.material
+        return if (material.reflective > 0 && material.transparency > 0) {
+            val reflectance = computation.schlick()
+            surfaceColor + reflectedColor * reflectance + refractedColor * (1 - reflectance)
+        } else surfaceColor + reflectedColor + refractedColor
     }
 
     fun colorAtIntersection(ray: Ray, remaining: Int = reflectionCalculationRecursionDepth): Tuple =
@@ -82,5 +90,31 @@ class World(
                 colorAtIntersection * computation.shape.material.reflective
             }
         }
+
+    fun refractedColor(
+        computation: ShadingPreComputation,
+        remaining: Int = reflectionCalculationRecursionDepth
+    ): Tuple =
+        when {
+            remaining == 0 -> black
+            computation.shape.material.transparency == 0.0 -> black
+            isTotalInternalReflection(computation) -> black
+            else -> {
+                val nRatio = computation.refractiveIndexOfMaterialExited / computation.refractiveIndexOfMaterialEntered
+                val cosI = computation.eyeVector.dot(computation.normalVector)
+                val sin2t = nRatio.pow(2) * (1 - cosI.pow(2))
+                val cosT = sqrt(1 - sin2t)
+                val direction = computation.normalVector * (nRatio * cosI - cosT) - computation.eyeVector * nRatio
+                val refractRay = Ray(computation.underPoint, direction)
+                colorAtIntersection(refractRay, remaining) * computation.shape.material.transparency
+            }
+        }
+
+    private fun isTotalInternalReflection(computation: ShadingPreComputation): Boolean {
+        val nRatio = computation.refractiveIndexOfMaterialExited / computation.refractiveIndexOfMaterialEntered
+        val cosI = computation.eyeVector.dot(computation.normalVector)
+        val sin2t = nRatio.pow(2) * (1 - cosI.pow(2))
+        return sin2t > 1
+    }
 
 }

@@ -1,6 +1,7 @@
 package raytracer.elements
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
 class IntersectionTest {
@@ -132,6 +133,20 @@ class IntersectionTest {
         assertEquals(i3, accumulation[0])
         assertEquals(i2, accumulation[1])
         assertEquals(i1, accumulation[2])
+    }
+
+    @Test
+    fun testIterateIntersections() {
+        val sphere = Sphere()
+        val i1 = Intersection(3.0, sphere)
+        val i2 = Intersection(2.0, sphere)
+        val i3 = Intersection(7.0, sphere)
+        val intersections = Intersections(i1, i2, i3)
+        val iterator = intersections.iterator()
+        assertEquals(i2, iterator.next())
+        assertEquals(i1, iterator.next())
+        assertEquals(i3, iterator.next())
+        assertFalse(iterator.hasNext())
     }
 
 }

@@ -31,4 +31,8 @@ class Sphere(
 
     override fun localNormalAt(point: Tuple): Tuple = point - center
 
+    companion object {
+        fun glass(): Sphere = Sphere(material = Material(transparency = 1.0, refractiveIndex = 1.5))
+    }
+
 }

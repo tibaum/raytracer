@@ -1,6 +1,6 @@
 package raytracer.elements
 
-class Intersections(private vararg val intersections: Intersection) {
+class Intersections(private vararg val intersections: Intersection) : Iterable<Intersection> {
 
     init {
         intersections.sort()
@@ -19,5 +19,7 @@ class Intersections(private vararg val intersections: Intersection) {
     fun hit(): Intersection? = intersections.find { it.time >= 0 }
 
     fun accumulate(other: Intersections) = Intersections(*intersections, *other.intersections)
+
+    override fun iterator(): Iterator<Intersection> = intersections.iterator()
 
 }
