@@ -236,4 +236,28 @@ class TupleTest {
         assertEquals(Tuple.vector(1.0, 0.0, 0.0), vector.reflectAround(surfaceNormal))
     }
 
+    @Test
+    fun testDestructuringComponent1() {
+        val tuple = Tuple(1.0, 2.0, 3.0)
+        val (x) = tuple
+        assertEquals(1.0, x)
+    }
+
+    @Test
+    fun testDestructuringComponents12() {
+        val tuple = Tuple(1.0, 2.0, 3.0)
+        val (x, y) = tuple
+        assertEquals(1.0, x)
+        assertEquals(2.0, y)
+    }
+
+    @Test
+    fun testDestructuringComponents123() {
+        val tuple = Tuple(1.0, 2.0, 3.0)
+        val (x, y, z) = tuple
+        assertEquals(1.0, x)
+        assertEquals(2.0, y)
+        assertEquals(3.0, z)
+    }
+
 }

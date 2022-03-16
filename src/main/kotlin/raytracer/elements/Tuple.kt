@@ -95,6 +95,10 @@ class Tuple(private vararg val values: Double) {
         return Tuple(*newValues)
     }
 
+    operator fun component1() = values[0]
+    operator fun component2() = values[1]
+    operator fun component3() = values[2]
+
     // Works especially for vectors because the fourth value is defined to be 0.0 and adds nothing to the calculation
     fun magnitude(): Double = sqrt(values.sumOf { value -> value * value })
 
