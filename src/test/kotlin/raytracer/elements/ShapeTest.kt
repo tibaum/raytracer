@@ -176,6 +176,60 @@ internal class ShapeTest {
         assertEquals(black, color2)
     }
 
+    @Test
+    fun testConvertPointFromWorldToObjectSpaceWithoutGroup() {
+        val shape = createShape(transformationMatrix = Matrix.scaling(2.0, 2.0, 2.0))
+        shape.group = null
+        assertEquals(point(2.5, 2.5, 2.5), shape.worldToObject(point(5.0, 5.0, 5.0)))
+    }
+
+    @Test
+    fun testConvertPointFromWorldToObjectSpace() {
+        val group1 = Group(transformationMatrix = Matrix.rotationY(PI / 2))
+        val group2 = Group(transformationMatrix = Matrix.scaling(2.0, 2.0, 2.0))
+        val shape = createShape(transformationMatrix = Matrix.translation(5.0, 0.0, 0.0))
+        group1.add(group2)
+        group2.add(shape)
+        assertEquals(point(0.0, 0.0, -1.0), shape.worldToObject(point(-2.0, 0.0, -10.0)))
+    }
+
+    @Test
+    fun testConvertNormalFromObjectToWorldSpaceWithoutGroup() {
+        val m = Matrix(
+            Dim(4, 4),
+            1.0, 2.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+        val shape = createShape(transformationMatrix = m)
+        shape.group = null
+        val normal = shape.normalToWorld(vector(1.0, 0.0, 0.0))
+        assertEquals(vector(0.44721, -0.89442, 0.0), normal)
+    }
+
+    @Test
+    fun testConvertNormalFromObjectToWorldSpace() {
+        val group1 = Group(transformationMatrix = Matrix.rotationY(PI / 2))
+        val group2 = Group(transformationMatrix = Matrix.scaling(1.0, 2.0, 3.0))
+        val shape = createShape(transformationMatrix = Matrix.translation(5.0, 0.0, 0.0))
+        group1.add(group2)
+        group2.add(shape)
+        val normal = shape.normalToWorld(vector(sqrt(3.0) / 3, sqrt(3.0) / 3, sqrt(3.0) / 3))
+        assertEquals(vector(0.28571, 0.42857, -0.85714), normal)
+    }
+
+    @Test
+    fun testFindNormalOnChildObject() {
+        val group1 = Group(transformationMatrix = Matrix.rotationY(PI / 2))
+        val group2 = Group(transformationMatrix = Matrix.scaling(1.0, 2.0, 3.0))
+        val shape = createShape(transformationMatrix = Matrix.translation(5.0, 0.0, 0.0))
+        group1.add(group2)
+        group2.add(shape)
+        val normal = shape.normalAt(point(1.7321, 1.1547, -5.5774))
+        assertEquals(vector(0.2857, 0.42854, -0.85716), normal)
+    }
+
     private fun createShape(
         transformationMatrix: Matrix = Matrix.identity(4),
         material: Material = Material(pattern = StripePattern())

@@ -40,7 +40,8 @@ class World(
     private val reflectionCalculationRecursionDepth = 5
 
     fun intersect(ray: Ray): Intersections =
-        shapes.map { it.intersect(ray) }.reduce(Intersections::accumulate)
+        if (shapes.isEmpty()) Intersections()
+        else shapes.map { it.intersect(ray) }.reduce(Intersections::accumulate)
 
     fun shadeHit(computation: ShadingPreComputation, remaining: Int = reflectionCalculationRecursionDepth): Tuple {
         val surfaceColor = computation.shape.lightning(

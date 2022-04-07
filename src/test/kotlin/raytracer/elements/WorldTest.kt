@@ -107,6 +107,14 @@ class WorldTest {
     }
 
     @Test
+    fun testIntersectingEmptyWorld() {
+        val world = World(shapes = emptyList())
+        val ray = Ray(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0))
+        val intersections = world.intersect(ray)
+        assertEquals(0, intersections.count)
+    }
+
+    @Test
     fun testReflectedColorForNonreflectiveMaterial() {
         val world = World(
             shapes = listOf(

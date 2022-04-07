@@ -7,7 +7,9 @@ abstract class Shape(
     val material: Material
 ) {
 
-    val inverseTransformation: Matrix = transformationMatrix.inverse()
+    var group: Group? = null
+
+    private val inverseTransformation: Matrix = transformationMatrix.inverse()
     private val transposedInverseTransformation: Matrix = inverseTransformation.transpose()
 
     val center = Tuple.point(0.0, 0.0, 0.0)
@@ -34,13 +36,28 @@ abstract class Shape(
      * Computes the surface normal, i.e., a vector that is perpendicular to the surface of the sphere.
      */
     fun normalAt(point: Tuple): Tuple {
-        val localPoint = inverseTransformation * point
+        val localPoint = worldToObject(point)
         val localNormal = localNormalAt(localPoint)
-        val worldNormal = transposedInverseTransformation * localNormal
-        return worldNormal.asVector().normalize()
+        return normalToWorld(localNormal)
     }
 
     abstract fun localNormalAt(point: Tuple): Tuple
+
+    /**
+     * Converts a point from world space to object space.
+     */
+    fun worldToObject(point: Tuple): Tuple {
+        val p = group?.worldToObject(point) ?: point
+        return inverseTransformation * p
+    }
+
+    /**
+     * Converts a normal vector from object space to world space.
+     */
+    fun normalToWorld(normal: Tuple): Tuple {
+        val n = (transposedInverseTransformation * normal).asVector().normalize()
+        return group?.normalToWorld(n) ?: n
+    }
 
     /**
      * Calculates the shade which makes the object appear three-dimensional.
