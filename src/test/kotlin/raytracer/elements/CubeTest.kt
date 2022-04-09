@@ -138,4 +138,12 @@ internal class CubeTest {
         assertEquals(vector(-1.0, 0.0, 0.0), cube.localNormalAt(point(-1.0, -1.0, -1.0)))
     }
 
+    @Test
+    fun testBoundingBox() {
+        val cube = Cube()
+        val boundingBox = cube.localBoundingBox()
+        assertEquals(point(-1.0, -1.0, -1.0), boundingBox.min)
+        assertEquals(point(1.0, 1.0, 1.0), boundingBox.max)
+    }
+
 }

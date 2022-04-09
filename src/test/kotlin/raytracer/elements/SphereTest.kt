@@ -2,6 +2,7 @@ package raytracer.elements
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import raytracer.elements.Tuple.Companion.point
 import kotlin.math.sqrt
 
 class SphereTest {
@@ -22,21 +23,21 @@ class SphereTest {
     @Test
     fun testNormalOnXAxis() {
         val sphere = Sphere()
-        val normal = sphere.localNormalAt(Tuple.point(1.0, 0.0, 0.0))
+        val normal = sphere.localNormalAt(point(1.0, 0.0, 0.0))
         assertEquals(Tuple.vector(1.0, 0.0, 0.0), normal)
     }
 
     @Test
     fun testNormalOnYAxis() {
         val sphere = Sphere()
-        val normal = sphere.localNormalAt(Tuple.point(0.0, 1.0, 0.0))
+        val normal = sphere.localNormalAt(point(0.0, 1.0, 0.0))
         assertEquals(Tuple.vector(0.0, 1.0, 0.0), normal)
     }
 
     @Test
     fun testNormalOnZAxis() {
         val sphere = Sphere()
-        val normal = sphere.localNormalAt(Tuple.point(0.0, 0.0, 1.0))
+        val normal = sphere.localNormalAt(point(0.0, 0.0, 1.0))
         assertEquals(Tuple.vector(0.0, 0.0, 1.0), normal)
     }
 
@@ -44,13 +45,13 @@ class SphereTest {
     fun testNormalAtNonAxialPoint() {
         val sphere = Sphere()
         val d = sqrt(3.0) / 3.0
-        val normal = sphere.localNormalAt(Tuple.point(d, d, d))
+        val normal = sphere.localNormalAt(point(d, d, d))
         assertEquals(Tuple.vector(d, d, d), normal)
     }
 
     @Test
     fun testComputeIntersection() {
-        val origin = Tuple.point(0.0, 0.0, -5.0)
+        val origin = point(0.0, 0.0, -5.0)
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere()
@@ -62,7 +63,7 @@ class SphereTest {
 
     @Test
     fun testComputeIntersectionTangent() {
-        val origin = Tuple.point(0.0, 1.0, -5.0)
+        val origin = point(0.0, 1.0, -5.0)
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere()
@@ -74,7 +75,7 @@ class SphereTest {
 
     @Test
     fun testComputeIntersectionWhenRayMissesSphere() {
-        val origin = Tuple.point(0.0, 2.0, -5.0)
+        val origin = point(0.0, 2.0, -5.0)
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere()
@@ -84,7 +85,7 @@ class SphereTest {
 
     @Test
     fun testComputeIntersectionWhenRayStartsInsideSphere() {
-        val origin = Tuple.point(0.0, 0.0, 0.0)
+        val origin = point(0.0, 0.0, 0.0)
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere()
@@ -96,7 +97,7 @@ class SphereTest {
 
     @Test
     fun testComputeIntersectionWhenSphereIsBehindRay() {
-        val origin = Tuple.point(0.0, 0.0, 5.0)
+        val origin = point(0.0, 0.0, 5.0)
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere()
@@ -108,7 +109,7 @@ class SphereTest {
 
     @Test
     fun testIntersectSetsObjectOnTheIntersection() {
-        val origin = Tuple.point(0.0, 0.0, -5.0)
+        val origin = point(0.0, 0.0, -5.0)
         val direction = Tuple.vector(0.0, 0.0, 1.0)
         val ray = Ray(origin, direction)
         val sphere = Sphere()
@@ -116,6 +117,14 @@ class SphereTest {
         assertEquals(2, intersections.count)
         assertEquals(sphere, intersections[0].shape)
         assertEquals(sphere, intersections[1].shape)
+    }
+
+    @Test
+    fun testBoundingBox() {
+        val sphere = Sphere()
+        val boundingBox = sphere.localBoundingBox()
+        assertEquals(point(-1.0, -1.0, -1.0), boundingBox.min)
+        assertEquals(point(1.0, 1.0, 1.0), boundingBox.max)
     }
 
 }

@@ -1,5 +1,6 @@
 package raytracer.elements
 
+import raytracer.elements.Tuple.Companion.point
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -30,6 +31,9 @@ class Sphere(
     }
 
     override fun localNormalAt(point: Tuple): Tuple = point - center
+
+    override fun localBoundingBox(): BoundingBox =
+        BoundingBox(point(-1.0, -1.0, -1.0), point(1.0, 1.0, 1.0))
 
     companion object {
         fun glass(): Sphere = Sphere(material = Material(transparency = 1.0, refractiveIndex = 1.5))

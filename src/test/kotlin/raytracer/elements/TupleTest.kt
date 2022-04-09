@@ -2,6 +2,7 @@ package raytracer.elements
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import kotlin.math.min
 import kotlin.math.sqrt
 
 class TupleTest {
@@ -258,6 +259,22 @@ class TupleTest {
         assertEquals(1.0, x)
         assertEquals(2.0, y)
         assertEquals(3.0, z)
+    }
+
+    @Test
+    fun testElementWise() {
+        val tuple1 = Tuple(1.0, 2.0, 3.0)
+        val tuple2 = Tuple(3.0, -2.0, 3.0)
+        val tuple = tuple1.elementWise(::min, tuple2)
+        assertEquals(Tuple(1.0, -2.0, 3.0), tuple)
+    }
+
+    @Test
+    fun testElementWiseUsesShorterLength() {
+        val tuple1 = Tuple(1.0, 2.0, 3.0, 4.0)
+        val tuple2 = Tuple(3.0, -2.0, 3.0)
+        val tuple = tuple1.elementWise(::min, tuple2)
+        assertEquals(3, tuple.size)
     }
 
 }

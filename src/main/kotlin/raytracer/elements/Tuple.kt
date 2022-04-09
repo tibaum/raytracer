@@ -12,6 +12,7 @@ class Tuple(private vararg val values: Double) {
             this
         }
 
+        val origin = point(0.0, 0.0, 0.0)
         val black = color(0.0, 0.0, 0.0)
         val white = color(1.0, 1.0, 1.0)
     }
@@ -130,6 +131,11 @@ class Tuple(private vararg val values: Double) {
     }
 
     fun reflectAround(surfaceNormal: Tuple): Tuple = this - surfaceNormal * 2.0 * this.dot(surfaceNormal)
+
+    fun elementWise(operation: (Double, Double) -> Double, other: Tuple): Tuple {
+        val backingArray = values.zip(other.values).map { operation(it.first, it.second) }.toDoubleArray()
+        return Tuple(*backingArray)
+    }
 
 }
 

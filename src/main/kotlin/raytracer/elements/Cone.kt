@@ -1,7 +1,9 @@
 package raytracer.elements
 
+import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -91,6 +93,11 @@ class Cone(
                 vector(x, if (y > 0) -s else s, z)
             }
         }
+    }
+
+    override fun localBoundingBox(): BoundingBox {
+        val extent = max(abs(minimum), abs(maximum))
+        return BoundingBox(point(-extent, minimum, -extent), point(extent, maximum, extent))
     }
 
 }

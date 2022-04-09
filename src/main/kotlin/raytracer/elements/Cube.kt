@@ -1,5 +1,6 @@
 package raytracer.elements
 
+import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
 import kotlin.math.abs
 
@@ -40,5 +41,8 @@ class Cube(
             else -> vector(0.0, 0.0, z)
         }
     }
+
+    override fun localBoundingBox(): BoundingBox =
+        BoundingBox(point(-1.0, -1.0, -1.0), point(1.0, 1.0, 1.0))
 
 }

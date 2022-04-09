@@ -1,5 +1,11 @@
 package raytracer.elements
 
+import raytracer.elements.Tuple.Companion.origin
+import raytracer.elements.Tuple.Companion.point
+import kotlin.Double.Companion.NEGATIVE_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 
 abstract class Shape(
@@ -12,7 +18,7 @@ abstract class Shape(
     private val inverseTransformation: Matrix = transformationMatrix.inverse()
     private val transposedInverseTransformation: Matrix = inverseTransformation.transpose()
 
-    val center = Tuple.point(0.0, 0.0, 0.0)
+    val center = origin
 
     /**
      * Computes the distance between the origin of the ray and its intersection points with the sphere.
@@ -57,6 +63,36 @@ abstract class Shape(
     fun normalToWorld(normal: Tuple): Tuple {
         val n = (transposedInverseTransformation * normal).asVector().normalize()
         return group?.normalToWorld(n) ?: n
+    }
+
+    fun boundingBox(): BoundingBox {
+        val box = localBoundingBox()
+        val (xMin, yMin, zMin) = box.min
+        val (xMax, yMax, zMax) = box.max
+        val corners = listOf(
+            point(xMin, yMin, zMin),
+            point(xMin, yMin, zMax),
+            point(xMin, yMax, zMin),
+            point(xMin, yMax, zMax),
+            point(xMax, yMin, zMin),
+            point(xMax, yMin, zMax),
+            point(xMax, yMax, zMin),
+            point(xMax, yMax, zMax),
+        )
+        val cornersInGroupSpace = corners.map { transformationMatrix * it }
+        val min = cornersInGroupSpace.reduce { first, second -> first.elementWise(::min, second) }
+        val max = cornersInGroupSpace.reduce { first, second -> first.elementWise(::max, second) }
+        return BoundingBox(replaceNaN(min, NEGATIVE_INFINITY), replaceNaN(max, POSITIVE_INFINITY))
+    }
+
+    abstract fun localBoundingBox(): BoundingBox
+
+    private fun replaceNaN(point: Tuple, replacement: Double): Tuple {
+        val backingArray = point.toDoubleArray()
+            .map { if (it.isNaN()) replacement else it }
+            .toDoubleArray()
+        backingArray[3] = 1.0
+        return Tuple(*backingArray)
     }
 
     /**

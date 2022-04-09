@@ -1,5 +1,6 @@
 package raytracer.elements
 
+import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
 import kotlin.Double.Companion.NEGATIVE_INFINITY
 import kotlin.Double.Companion.POSITIVE_INFINITY
@@ -91,5 +92,8 @@ class Cylinder(
             else -> vector(x, 0.0, z)
         }
     }
+
+    override fun localBoundingBox(): BoundingBox =
+        BoundingBox(point(-1.0, minimum, -1.0), point(1.0, maximum, 1.0))
 
 }

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
+import kotlin.Double.Companion.NEGATIVE_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
 
 class PlaneTest {
 
@@ -49,6 +51,20 @@ class PlaneTest {
         assertEquals(1, intersections.count)
         assertEquals(1.0, intersections[0].time)
         assertEquals(plane, intersections[0].shape)
+    }
+
+    @Test
+    fun testBoundingBox() {
+        val plane = Plane()
+        val boundingBox = plane.localBoundingBox()
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[0])
+        assertEquals(0.0, boundingBox.min[1])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[0])
+        assertEquals(0.0, boundingBox.max[1])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
     }
 
 }

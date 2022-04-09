@@ -7,6 +7,8 @@ import raytracer.elements.Tuple.Companion.color
 import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
 import raytracer.elements.Tuple.Companion.white
+import kotlin.Double.Companion.NEGATIVE_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.PI
 import kotlin.math.sqrt
 
@@ -185,11 +187,15 @@ internal class ShapeTest {
 
     @Test
     fun testConvertPointFromWorldToObjectSpace() {
-        val group1 = Group(transformationMatrix = Matrix.rotationY(PI / 2))
-        val group2 = Group(transformationMatrix = Matrix.scaling(2.0, 2.0, 2.0))
         val shape = createShape(transformationMatrix = Matrix.translation(5.0, 0.0, 0.0))
-        group1.add(group2)
-        group2.add(shape)
+        val group2 = Group(
+            transformationMatrix = Matrix.scaling(2.0, 2.0, 2.0),
+            shapes = listOf(shape)
+        )
+        Group(
+            transformationMatrix = Matrix.rotationY(PI / 2),
+            shapes = listOf(group2)
+        )
         assertEquals(point(0.0, 0.0, -1.0), shape.worldToObject(point(-2.0, 0.0, -10.0)))
     }
 
@@ -210,29 +216,65 @@ internal class ShapeTest {
 
     @Test
     fun testConvertNormalFromObjectToWorldSpace() {
-        val group1 = Group(transformationMatrix = Matrix.rotationY(PI / 2))
-        val group2 = Group(transformationMatrix = Matrix.scaling(1.0, 2.0, 3.0))
         val shape = createShape(transformationMatrix = Matrix.translation(5.0, 0.0, 0.0))
-        group1.add(group2)
-        group2.add(shape)
+        val group2 = Group(
+            transformationMatrix = Matrix.scaling(1.0, 2.0, 3.0),
+            shapes = listOf(shape)
+        )
+        Group(
+            transformationMatrix = Matrix.rotationY(PI / 2),
+            shapes = listOf(group2)
+        )
         val normal = shape.normalToWorld(vector(sqrt(3.0) / 3, sqrt(3.0) / 3, sqrt(3.0) / 3))
         assertEquals(vector(0.28571, 0.42857, -0.85714), normal)
     }
 
     @Test
     fun testFindNormalOnChildObject() {
-        val group1 = Group(transformationMatrix = Matrix.rotationY(PI / 2))
-        val group2 = Group(transformationMatrix = Matrix.scaling(1.0, 2.0, 3.0))
         val shape = createShape(transformationMatrix = Matrix.translation(5.0, 0.0, 0.0))
-        group1.add(group2)
-        group2.add(shape)
+        val group2 = Group(
+            transformationMatrix = Matrix.scaling(1.0, 2.0, 3.0),
+            shapes = listOf(shape)
+        )
+        Group(
+            transformationMatrix = Matrix.rotationY(PI / 2),
+            shapes = listOf(group2)
+        )
         val normal = shape.normalAt(point(1.7321, 1.1547, -5.5774))
         assertEquals(vector(0.2857, 0.42854, -0.85716), normal)
     }
 
+    @Test
+    fun testBoundingBox() {
+        val shape = createShape(Matrix.rotationY(0.5))
+        val boundingBox = shape.boundingBox()
+        assertEquals(point(0.08126, 1.0, -0.16253), boundingBox.min)
+        assertEquals(point(5.42803, 3.0, 3.98975), boundingBox.max)
+    }
+
+    @Test
+    fun testBoundingBoxWithNaNAfterTransformation() {
+        val shape = createShape(
+            boundingBox = BoundingBox(
+                point(NEGATIVE_INFINITY, 0.0, NEGATIVE_INFINITY),
+                point(POSITIVE_INFINITY, 3.0, POSITIVE_INFINITY)
+            )
+        )
+        val boundingBox = shape.boundingBox()
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[0])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[1])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[0])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[1])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
+    }
+
     private fun createShape(
         transformationMatrix: Matrix = Matrix.identity(4),
-        material: Material = Material(pattern = StripePattern())
+        material: Material = Material(pattern = StripePattern()),
+        boundingBox: BoundingBox = BoundingBox(point(-1.0, 1.0, 2.0), point(4.0, 3.0, 4.0))
     ) = object : Shape(transformationMatrix, material) {
         lateinit var localRay: Ray
         override fun localIntersect(ray: Ray): Intersections {
@@ -240,7 +282,8 @@ internal class ShapeTest {
             return Intersections()
         }
 
-        override fun localNormalAt(point: Tuple) = vector(point[0], point[1], point[2])
+        override fun localNormalAt(point: Tuple) = point.asVector()
+        override fun localBoundingBox() = boundingBox
     }
 
 }

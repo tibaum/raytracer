@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
+import kotlin.Double.Companion.NEGATIVE_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.abs
 
 internal class CylinderTest {
@@ -195,6 +197,56 @@ internal class CylinderTest {
         assertEquals(vector(0.0, 1.0, 0.0), cylinder.localNormalAt(point(0.0, 2.0, 0.0)))
         assertEquals(vector(0.0, 1.0, 0.0), cylinder.localNormalAt(point(0.5, 2.0, 0.0)))
         assertEquals(vector(0.0, 1.0, 0.0), cylinder.localNormalAt(point(0.0, 2.0, 0.5)))
+    }
+
+    @Test
+    fun testBoundingBoxForInfiniteCylinder() {
+        val cylinder = Cylinder()
+        val boundingBox = cylinder.localBoundingBox()
+        assertEquals(-1.0, boundingBox.min[0])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[1])
+        assertEquals(-1.0, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(1.0, boundingBox.max[0])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[1])
+        assertEquals(1.0, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
+    }
+
+    @Test
+    fun testBoundingBoxForCylinderWithInfiniteMinimum() {
+        val cylinder = Cylinder(maximum = 2.0)
+        val boundingBox = cylinder.localBoundingBox()
+        assertEquals(-1.0, boundingBox.min[0])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[1])
+        assertEquals(-1.0, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(1.0, boundingBox.max[0])
+        assertEquals(2.0, boundingBox.max[1])
+        assertEquals(1.0, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
+    }
+
+    @Test
+    fun testBoundingBoxForCylinderWithInfiniteMaximum() {
+        val cylinder = Cylinder(minimum = -3.0)
+        val boundingBox = cylinder.localBoundingBox()
+        assertEquals(-1.0, boundingBox.min[0])
+        assertEquals(-3.0, boundingBox.min[1])
+        assertEquals(-1.0, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(1.0, boundingBox.max[0])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[1])
+        assertEquals(1.0, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
+    }
+
+    @Test
+    fun testBoundingBoxForBoundedCylinder() {
+        val cylinder = Cylinder(minimum = -3.0, maximum = 4.0)
+        val boundingBox = cylinder.localBoundingBox()
+        assertEquals(point(-1.0, -3.0, -1.0), boundingBox.min)
+        assertEquals(point(1.0, 4.0, 1.0), boundingBox.max)
     }
 
 }

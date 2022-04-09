@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
+import kotlin.Double.Companion.NEGATIVE_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -111,6 +113,64 @@ internal class ConeTest {
         assertEquals(vector(0.0, 1.0, 0.0), cone.localNormalAt(point(0.0, 2.0, 0.0)))
         assertEquals(vector(0.0, 1.0, 0.0), cone.localNormalAt(point(1.5, 2.0, 0.0)))
         assertEquals(vector(0.0, 1.0, 0.0), cone.localNormalAt(point(0.0, 2.0, 1.5)))
+    }
+
+    @Test
+    fun testLocalBoundingBoxForInfiniteCone() {
+        val cone = Cone(minimum = NEGATIVE_INFINITY, maximum = POSITIVE_INFINITY)
+        val boundingBox = cone.localBoundingBox()
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[0])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[1])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[0])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[1])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
+    }
+
+    @Test
+    fun testLocalBoundingBoxForConeWithInfinteMinimum() {
+        val cone = Cone(minimum = NEGATIVE_INFINITY, maximum = 0.0)
+        val boundingBox = cone.localBoundingBox()
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[0])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[1])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[0])
+        assertEquals(0.0, boundingBox.max[1])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
+    }
+
+    @Test
+    fun testLocalBoundingBoxForConeWithInfinteMaximum() {
+        val cone = Cone(minimum = 0.0, maximum = POSITIVE_INFINITY)
+        val boundingBox = cone.localBoundingBox()
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[0])
+        assertEquals(0.0, boundingBox.min[1])
+        assertEquals(NEGATIVE_INFINITY, boundingBox.min[2])
+        assertEquals(1.0, boundingBox.min[3])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[0])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[1])
+        assertEquals(POSITIVE_INFINITY, boundingBox.max[2])
+        assertEquals(1.0, boundingBox.max[3])
+    }
+
+    @Test
+    fun testLocalBoundingBoxForBoundedConeWithAbsoluteMaxGreaterThanAbsoluteMin() {
+        val cone = Cone(minimum = -1.5, maximum = 3.0)
+        val boundingBox = cone.localBoundingBox()
+        assertEquals(point(-3.0, -1.5, -3.0), boundingBox.min)
+        assertEquals(point(3.0, 3.0, 3.0), boundingBox.max)
+    }
+
+    @Test
+    fun testLocalBoundingBoxForBoundedConeWithAbsoluteMinGreaterThanAbsoluteMax() {
+        val cone = Cone(minimum = -3.0, maximum = 1.5)
+        val boundingBox = cone.localBoundingBox()
+        assertEquals(point(-3.0, -3.0, -3.0), boundingBox.min)
+        assertEquals(point(3.0, 1.5, 3.0), boundingBox.max)
     }
 
 }
