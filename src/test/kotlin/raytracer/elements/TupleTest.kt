@@ -265,7 +265,7 @@ class TupleTest {
     fun testElementWise() {
         val tuple1 = Tuple(1.0, 2.0, 3.0)
         val tuple2 = Tuple(3.0, -2.0, 3.0)
-        val tuple = tuple1.elementWise(::min, tuple2)
+        val tuple = tuple1.elementWise(tuple2, ::min)
         assertEquals(Tuple(1.0, -2.0, 3.0), tuple)
     }
 
@@ -273,8 +273,30 @@ class TupleTest {
     fun testElementWiseUsesShorterLength() {
         val tuple1 = Tuple(1.0, 2.0, 3.0, 4.0)
         val tuple2 = Tuple(3.0, -2.0, 3.0)
-        val tuple = tuple1.elementWise(::min, tuple2)
+        val tuple = tuple1.elementWise(tuple2, ::min)
         assertEquals(3, tuple.size)
+    }
+
+    @Test
+    fun testElementWiseWithEmptyTuples() {
+        val tuple1 = Tuple()
+        val tuple2 = Tuple()
+        val tuple = tuple1.elementWise(tuple2, ::min)
+        assertEquals(Tuple(), tuple)
+    }
+
+    @Test
+    fun testHadamardProduct() {
+        val tuple1 = Tuple(1.0, 0.2, 0.4)
+        val tuple2 = Tuple(0.9, 1.0, 0.1)
+        assertEquals(Tuple(0.9, 0.2, 0.04), tuple1.hadamardProduct(tuple2))
+    }
+
+    @Test
+    fun testHadamardProductWorksOnlyWithTuplesOfEqualSize() {
+        val tuple1 = Tuple(1.0, 0.2, 0.4, 0.5)
+        val tuple2 = Tuple(0.9, 1.0, 0.1)
+        assertThrows(IllegalArgumentException::class.java) { tuple1.hadamardProduct(tuple2) }
     }
 
 }

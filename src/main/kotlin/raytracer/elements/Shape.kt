@@ -80,8 +80,8 @@ abstract class Shape(
             point(xMax, yMax, zMax),
         )
         val cornersInGroupSpace = corners.map { transformationMatrix * it }
-        val min = cornersInGroupSpace.reduce { first, second -> first.elementWise(::min, second) }
-        val max = cornersInGroupSpace.reduce { first, second -> first.elementWise(::max, second) }
+        val min = cornersInGroupSpace.reduce { first, second -> first.elementWise(second, ::min) }
+        val max = cornersInGroupSpace.reduce { first, second -> first.elementWise(second, ::max) }
         return BoundingBox(replaceNaN(min, NEGATIVE_INFINITY), replaceNaN(max, POSITIVE_INFINITY))
     }
 

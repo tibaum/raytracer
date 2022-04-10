@@ -19,8 +19,8 @@ class BoundingBox(val min: Tuple, val max: Tuple) {
     }
 
     fun accumulate(other: BoundingBox): BoundingBox {
-        val minimum = min.elementWise(::min, other.min)
-        val maximum = max.elementWise(::max, other.max)
+        val minimum = min.elementWise(other.min, ::min)
+        val maximum = max.elementWise(other.max, ::max)
         return BoundingBox(minimum, maximum)
     }
 

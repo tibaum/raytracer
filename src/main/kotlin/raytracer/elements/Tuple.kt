@@ -124,15 +124,13 @@ class Tuple(private vararg val values: Double) {
     }
 
     fun hadamardProduct(other: Tuple): Tuple {
-        val newValues = DoubleArray(values.size)
-        for (i in values.indices)
-            newValues[i] = values[i] * other.values[i]
-        return Tuple(*newValues)
+        require(size == other.size) { "tuples must be of equal size but this.size=${this.size} and other.size=${other.size}" }
+        return elementWise(other) { first, second -> first * second }
     }
 
     fun reflectAround(surfaceNormal: Tuple): Tuple = this - surfaceNormal * 2.0 * this.dot(surfaceNormal)
 
-    fun elementWise(operation: (Double, Double) -> Double, other: Tuple): Tuple {
+    fun elementWise(other: Tuple, operation: (Double, Double) -> Double): Tuple {
         val backingArray = values.zip(other.values).map { operation(it.first, it.second) }.toDoubleArray()
         return Tuple(*backingArray)
     }
