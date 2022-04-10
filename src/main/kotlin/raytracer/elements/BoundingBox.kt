@@ -3,7 +3,20 @@ package raytracer.elements
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * A bounding box surrounds a shape or a group of shapes and can be used to reduce the number of intersection
+ * calculations. If a ray misses the bounding box, it misses all shapes inside the bounding box. In this case
+ * no intersection calculation by the shapes inside the bounding box is necessary.
+ */
 class BoundingBox(val min: Tuple, val max: Tuple) {
+
+    init {
+        require(min.isPoint()) { "min must be a point but was: $min" }
+        require(max.isPoint()) { "max must be a point but was: $max" }
+        require(min[0] <= max[0] && min[1] <= max[1] && min[2] <= max[2]) {
+            "min=$min must be less or equal to max=$max in all coordinates"
+        }
+    }
 
     fun accumulate(other: BoundingBox): BoundingBox {
         val minimum = min.elementWise(::min, other.min)

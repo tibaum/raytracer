@@ -8,6 +8,18 @@ import raytracer.elements.Tuple.Companion.vector
 internal class BoundingBoxTest {
 
     @Test
+    fun testConstruction() {
+        assertDoesNotThrow { BoundingBox(point(1.0, 1.0, 1.0), point(1.0, 1.0, 1.0)) }
+
+        assertThrows(IllegalArgumentException::class.java) { BoundingBox(point(1.0, 1.0, 1.0), point(0.9, 1.0, 1.0)) }
+        assertThrows(IllegalArgumentException::class.java) { BoundingBox(point(1.0, 1.0, 1.0), point(1.0, 0.9, 1.0)) }
+        assertThrows(IllegalArgumentException::class.java) { BoundingBox(point(1.0, 1.0, 1.0), point(1.0, 1.0, 0.9)) }
+
+        assertThrows(IllegalArgumentException::class.java) { BoundingBox(vector(1.0, 1.0, 1.0), point(1.0, 1.0, 1.0)) }
+        assertThrows(IllegalArgumentException::class.java) { BoundingBox(point(1.0, 1.0, 1.0), vector(1.0, 1.0, 1.0)) }
+    }
+
+    @Test
     fun testAccumulate() {
         val box1 = BoundingBox(point(1.0, 3.0, -4.0), point(5.0, 4.0, 1.0))
         val box2 = BoundingBox(point(-7.0, 4.0, -5.0), point(3.0, 8.0, 2.0))
