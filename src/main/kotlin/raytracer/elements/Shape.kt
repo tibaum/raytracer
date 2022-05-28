@@ -41,13 +41,13 @@ abstract class Shape(
     /**
      * Computes the surface normal, i.e., a vector that is perpendicular to the surface of the sphere.
      */
-    fun normalAt(point: Tuple): Tuple {
+    fun normalAt(point: Tuple, hit: Intersection? = null): Tuple {
         val localPoint = worldToObject(point)
-        val localNormal = localNormalAt(localPoint)
+        val localNormal = localNormalAt(localPoint, hit)
         return normalToWorld(localNormal)
     }
 
-    abstract fun localNormalAt(point: Tuple): Tuple
+    abstract fun localNormalAt(point: Tuple, hit: Intersection? = null): Tuple
 
     /**
      * Converts a point from world space to object space.
@@ -77,7 +77,7 @@ abstract class Shape(
             point(xMax, yMin, zMin),
             point(xMax, yMin, zMax),
             point(xMax, yMax, zMin),
-            point(xMax, yMax, zMax),
+            point(xMax, yMax, zMax)
         )
         val cornersInGroupSpace = corners.map { transformationMatrix * it }
         val min = cornersInGroupSpace.reduce { first, second -> first.elementWise(second, ::min) }

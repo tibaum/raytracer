@@ -82,7 +82,7 @@ internal class GroupTest {
     fun testIntersectionOnShapeIsNotCalledWhenRayMissesBoundingBox() {
         val shape = object : Shape(Matrix.identity(4), Material()) {
             override fun localIntersect(ray: Ray) = throw IllegalAccessException()
-            override fun localNormalAt(point: Tuple) = point.asVector()
+            override fun localNormalAt(point: Tuple, hit: Intersection?) = point.asVector()
             override fun localBoundingBox() = BoundingBox(point(-1.0, -1.0, -1.0), point(1.0, 1.0, 1.0))
         }
         val group = Group(shapes = listOf(shape))
@@ -92,7 +92,7 @@ internal class GroupTest {
 
     private fun createShape() = object : Shape(Matrix.identity(4), Material()) {
         override fun localIntersect(ray: Ray) = Intersections()
-        override fun localNormalAt(point: Tuple) = point.asVector()
+        override fun localNormalAt(point: Tuple, hit: Intersection?) = point.asVector()
         override fun localBoundingBox() = BoundingBox(origin, origin)
     }
 

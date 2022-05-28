@@ -202,8 +202,8 @@ class TupleTest {
     fun testCrossProduct() {
         val vector1 = Tuple.vector(1.0, 2.0, 3.0)
         val vector2 = Tuple.vector(2.0, 3.0, 4.0)
-        assertEquals(Tuple(-1.0, 2.0, -1.0), vector1.cross(vector2))
-        assertEquals(Tuple(1.0, -2.0, 1.0), vector2.cross(vector1))
+        assertEquals(Tuple(-1.0, 2.0, -1.0, 0.0), vector1.cross(vector2))
+        assertEquals(Tuple(1.0, -2.0, 1.0, 0.0), vector2.cross(vector1))
     }
 
     @Test

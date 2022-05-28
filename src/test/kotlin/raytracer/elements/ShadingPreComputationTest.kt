@@ -266,4 +266,21 @@ class ShadingPreComputationTest {
         assertTrue(abs(0.48873 - reflectance) < EPSILON)
     }
 
+    @Test
+    fun testPreparingNormalOnSmoothTriangle() {
+        val triangle = SmoothTriangle(
+            point1 = point(0.0, 1.0, 0.0),
+            point2 = point(-1.0, 0.0, 0.0),
+            point3 = point(1.0, 0.0, 0.0),
+            normal1 = vector(0.0, 1.0, 0.0),
+            normal2 = vector(-1.0, 0.0, 0.0),
+            normal3 = vector(1.0, 0.0, 0.0)
+        )
+        val hit = Intersection(1.0, triangle, 0.45, 0.25)
+        val ray = Ray(point(-0.2, 0.3, -2.0), vector(0.0, 0.0, 1.0))
+        val intersections = Intersections(hit)
+        val computation = ShadingPreComputation.of(ray, hit, intersections)
+        assertEquals(vector(-0.5547, 0.83205, 0.0), computation.normalVector)
+    }
+
 }

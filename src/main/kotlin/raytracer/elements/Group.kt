@@ -18,7 +18,7 @@ class Group(
         if (shapes.isEmpty() || !boundingBox.intersect(ray)) Intersections()
         else shapes.map { it.intersect(ray) }.reduce(Intersections::accumulate)
 
-    override fun localNormalAt(point: Tuple): Tuple {
+    override fun localNormalAt(point: Tuple, hit: Intersection?): Tuple {
         throw UnsupportedOperationException("call localNormalAt on the concrete shapes in this group")
     }
 

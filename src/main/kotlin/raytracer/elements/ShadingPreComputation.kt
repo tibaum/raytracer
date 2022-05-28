@@ -55,7 +55,7 @@ data class ShadingPreComputation(
         ): ShadingPreComputation {
             val pointWhereRayHitsSphere = ray.position(intersection.time)
             val eyeVector = -ray.direction
-            val normalVector = intersection.shape.normalAt(pointWhereRayHitsSphere)
+            val normalVector = intersection.shape.normalAt(pointWhereRayHitsSphere, intersection)
             val intersectionOccursInside = normalVector.dot(eyeVector) < 0
             val resultingNormalVector = if (intersectionOccursInside) -normalVector else normalVector
             val reflectVector = ray.direction.reflectAround(resultingNormalVector)

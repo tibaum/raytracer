@@ -30,7 +30,7 @@ class Sphere(
         }
     }
 
-    override fun localNormalAt(point: Tuple): Tuple = point - center
+    override fun localNormalAt(point: Tuple, hit: Intersection?): Tuple = point - center
 
     override fun localBoundingBox(): BoundingBox =
         BoundingBox(point(-1.0, -1.0, -1.0), point(1.0, 1.0, 1.0))

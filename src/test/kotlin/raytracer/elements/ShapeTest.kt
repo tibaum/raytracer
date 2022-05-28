@@ -282,7 +282,7 @@ internal class ShapeTest {
             return Intersections()
         }
 
-        override fun localNormalAt(point: Tuple) = point.asVector()
+        override fun localNormalAt(point: Tuple, hit: Intersection?) = point.asVector()
         override fun localBoundingBox() = boundingBox
     }
 

@@ -83,7 +83,7 @@ class Cylinder(
         return x.pow(2) + z.pow(2) <= 1
     }
 
-    override fun localNormalAt(point: Tuple): Tuple {
+    override fun localNormalAt(point: Tuple, hit: Intersection?): Tuple {
         val (x, y, z) = point
         val distanceFromYAxis = x.pow(2) + z.pow(2)
         return when {

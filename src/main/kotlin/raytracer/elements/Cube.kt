@@ -33,7 +33,7 @@ class Cube(
         return Pair(tmin, tmax).sorted()
     }
 
-    override fun localNormalAt(point: Tuple): Tuple {
+    override fun localNormalAt(point: Tuple, hit: Intersection?): Tuple {
         val (x, y, z) = point
         return when (maxOf(abs(x), abs(y), abs(z))) {
             abs(x) -> vector(x, 0.0, 0.0)

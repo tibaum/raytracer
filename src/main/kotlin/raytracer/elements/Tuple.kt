@@ -119,7 +119,8 @@ class Tuple(private vararg val values: Double) {
         return Tuple(
             values[1] * other.values[2] - values[2] * other.values[1],
             values[2] * other.values[0] - values[0] * other.values[2],
-            values[0] * other.values[1] - values[1] * other.values[0]
+            values[0] * other.values[1] - values[1] * other.values[0],
+            0.0
         )
     }
 
