@@ -4,9 +4,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import raytracer.elements.CsgOperation.UNION
 import raytracer.elements.Tuple.Companion.origin
 import raytracer.elements.Tuple.Companion.point
 import raytracer.elements.Tuple.Companion.vector
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class GroupTest {
 
@@ -94,6 +97,48 @@ internal class GroupTest {
         override fun localIntersect(ray: Ray) = Intersections()
         override fun localNormalAt(point: Tuple, hit: Intersection?) = point.asVector()
         override fun localBoundingBox() = BoundingBox(origin, origin)
+    }
+
+    @Test
+    fun testIncludesShape() {
+        val sphere = Sphere()
+        val cube = Cube()
+        val cone = Cone()
+        val cylinder = Cylinder()
+        val csgShape = CsgShape(left = sphere, right = cube, operation = UNION)
+        val group1 = Group(shapes = listOf(csgShape))
+        val group2 = Group(shapes = listOf(group1, cone))
+        val group3 = Group(shapes = listOf(group2, cylinder))
+
+        assertTrue { group1.includes(sphere) }
+        assertTrue { group1.includes(cube) }
+        assertFalse { group1.includes(cone) }
+        assertFalse { group1.includes(cylinder) }
+        assertTrue { group1.includes(csgShape) }
+        assertTrue { group1.includes(group1) }
+        assertFalse { group1.includes(group2) }
+        assertFalse { group1.includes(group3) }
+
+        assertTrue { group2.includes(sphere) }
+        assertTrue { group2.includes(cube) }
+        assertTrue { group2.includes(cone) }
+        assertFalse { group2.includes(cylinder) }
+        assertTrue { group2.includes(csgShape) }
+        assertTrue { group2.includes(group1) }
+        assertTrue { group2.includes(group2) }
+        assertFalse { group2.includes(group3) }
+
+        assertTrue { group3.includes(cube) }
+        assertTrue { group3.includes(cone) }
+        assertTrue { group3.includes(cylinder) }
+        assertTrue { group3.includes(sphere) }
+        assertTrue { group3.includes(csgShape) }
+        assertTrue { group3.includes(group1) }
+        assertTrue { group3.includes(group2) }
+        assertTrue { group3.includes(group3) }
+        assertFalse { group3.includes(Group(shapes = listOf())) }
+        assertFalse { group3.includes(CsgShape(left = sphere, right = cube, operation = UNION)) }
+        assertFalse { group3.includes(Sphere()) }
     }
 
 }

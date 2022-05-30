@@ -11,6 +11,8 @@ import kotlin.Double.Companion.NEGATIVE_INFINITY
 import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.PI
 import kotlin.math.sqrt
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class ShapeTest {
 
@@ -269,6 +271,13 @@ internal class ShapeTest {
         assertEquals(POSITIVE_INFINITY, boundingBox.max[1])
         assertEquals(POSITIVE_INFINITY, boundingBox.max[2])
         assertEquals(1.0, boundingBox.max[3])
+    }
+
+    @Test
+    fun testIncludesShape() {
+        val shape = createShape()
+        assertTrue { shape.includes(shape) }
+        assertFalse { shape.includes(createShape()) }
     }
 
     private fun createShape(

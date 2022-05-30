@@ -26,4 +26,7 @@ class Group(
         if (shapes.isEmpty()) BoundingBox(origin, origin)
         else shapes.map(Shape::boundingBox).reduce(BoundingBox::accumulate)
 
+    override fun includes(shape: Shape): Boolean =
+        (shape is Group && this == shape) || shapes.any { it.includes(shape) }
+
 }

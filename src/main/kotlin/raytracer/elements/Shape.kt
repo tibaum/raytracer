@@ -14,11 +14,14 @@ abstract class Shape(
 ) {
 
     var group: Group? = null
+    var parent: CsgShape? = null
 
     private val inverseTransformation: Matrix = transformationMatrix.inverse()
     private val transposedInverseTransformation: Matrix = inverseTransformation.transpose()
 
     val center = origin
+
+    open fun includes(shape: Shape): Boolean = this == shape
 
     /**
      * Computes the distance between the origin of the ray and its intersection points with the sphere.
